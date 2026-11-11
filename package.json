@@ -1,0 +1,23 @@
+{
+  "name": "livedeck-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LiveDeck accounts API: sign up / sign in, 30-day device-bound trial, subscription status",
+  "main": "src/index.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node test/auth.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "pg-mem": "^3.0.4"
+  }
+}
