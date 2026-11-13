@@ -17,8 +17,14 @@ function createApp(pool, env = process.env) {
 
   app.get('/health', (_req, res) => res.json({ ok: true }));
   // زر «اشترك الآن» في التطبيق يفتح هذا الرابط؛ يحوّل لصفحة الدفع (Moyasar/Paddle...) عند ضبط PAYMENT_URL
-  app.get('/subscribe', (_req, res) => {
-    if (env.PAYMENT_URL) return res.redirect(302, env.PAYMENT_URL);
+  // ?plan=monthly|quarterly|yearly يُمرَّر لصفحة الدفع كما هو
+  app.get('/subscribe', (req, res) => {
+    if (env.PAYMENT_URL) {
+      const plan = ['monthly', 'quarterly', 'yearly'].includes(req.query.plan) ? req.query.plan : null;
+      const url = new URL(env.PAYMENT_URL);
+      if (plan) url.searchParams.set('plan', plan);
+      return res.redirect(302, url.toString());
+    }
     res.status(503).type('html').send('<!doctype html><meta charset="utf-8"><body dir="rtl" style="font-family:sans-serif;padding:40px">صفحة الاشتراك قيد التجهيز.</body>');
   });
 
@@ -27,6 +33,7 @@ function createApp(pool, env = process.env) {
     message: { error: 'TOO_MANY_REQUESTS', message: 'محاولات كثيرة، حاول بعد قليل' } });
   app.use('/api/auth/register', limiter);
   app.use('/api/auth/login', limiter);
+  app.use('/api/auth/redeem', limiter); // يمنع تخمين الأكواد
   app.use('/api/auth', authRouter(pool, env));
 
   app.use((err, _req, res, _next) => {

@@ -56,6 +56,26 @@ const { createApp } = require('../src/index');
 
     const bad = await fetch(base + '/me', { headers: { authorization: 'Bearer nope' } });
     ok(bad.status === 401, 'invalid token rejected');
+
+    // أكواد التفعيل والسجل
+    const authed = (p, body) => fetch(base + p, { method: body ? 'POST' : 'GET', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token }, body: body ? JSON.stringify(body) : undefined }).then(async (x) => ({ status: x.status, body: await x.json() }));
+    await pool.query(`INSERT INTO activation_codes (code, plan, days) VALUES ('ABCD-EFGH-JKLM', 'pro', 90)`);
+    const before = new Date(me.subscription.subscription_ends_at);
+    r = await authed('/redeem', { code: 'abcd efgh jklm' });
+    ok(r.status === 200 && r.body.added_days === 90 && r.body.subscription.status === 'active', 'redeem accepts code (case/space-insensitive)');
+    const after = new Date(r.body.subscription.subscription_ends_at);
+    ok(Math.round((after - before) / 86400000) === 90, 'redeem on active sub extends from current end date');
+    r = await authed('/redeem', { code: 'ABCD-EFGH-JKLM' });
+    ok(r.status === 409 && r.body.error === 'CODE_USED', 'code cannot be redeemed twice');
+    r = await authed('/redeem', { code: 'ZZZZ-ZZZZ-ZZZZ' });
+    ok(r.status === 404 && r.body.error === 'INVALID_CODE', 'unknown code rejected');
+    r = await authed('/redeem', { code: 'bad' });
+    ok(r.status === 400 && r.body.error === 'INVALID_CODE', 'malformed code rejected');
+    r = await authed('/history');
+    ok(r.status === 200 && r.body.history.length === 1 && r.body.history[0].source === 'code', 'history lists the redeemed period');
+    const { generateCode, normalizeCode } = require('../src/auth');
+    const g = generateCode();
+    ok(/^[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(g) && normalizeCode(g) === g, 'generated codes are well-formed');
     console.log(`\n${pass} passed`);
   } catch (e) {
     console.error('FAIL:', e.message);

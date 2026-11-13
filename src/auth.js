@@ -16,6 +16,18 @@ class HttpError extends Error {
   }
 }
 
+// Activation codes: 12 chars from an unambiguous alphabet, shown as XXXX-XXXX-XXXX
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function normalizeCode(input) {
+  const raw = String(input || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (raw.length !== 12 || [...raw].some((c) => !CODE_ALPHABET.includes(c))) return null;
+  return raw.match(/.{4}/g).join('-');
+}
+function generateCode() {
+  const bytes = crypto.randomBytes(12);
+  return normalizeCode([...bytes].map((b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join(''));
+}
+
 // Current access state for a user row joined with its device row
 function accessState(row, now = new Date()) {
   const subEnds = row.subscription_ends_at ? new Date(row.subscription_ends_at) : null;
@@ -118,16 +130,71 @@ function authRouter(pool, env = process.env) {
     }
   });
 
+  async function requireUser(req) {
+    const m = /^Bearer (.+)$/.exec(req.headers.authorization || '');
+    if (!m) throw new HttpError(401, 'NO_TOKEN', 'سجّل الدخول أولاً');
+    let payload;
+    try { payload = jwt.verify(m[1], secret); } catch (_) { throw new HttpError(401, 'BAD_TOKEN', 'انتهت الجلسة، سجّل الدخول من جديد'); }
+    const user = await loadUser('u.id', payload.sub);
+    if (!user) throw new HttpError(401, 'BAD_TOKEN', 'الحساب غير موجود');
+    return user;
+  }
+
   // يستدعيه التطبيق عند التشغيل وكل فترة: يعيد حالة الاشتراك الحالية
   router.get('/me', async (req, res, next) => {
     try {
-      const m = /^Bearer (.+)$/.exec(req.headers.authorization || '');
-      if (!m) throw new HttpError(401, 'NO_TOKEN', 'سجّل الدخول أولاً');
-      let payload;
-      try { payload = jwt.verify(m[1], secret); } catch (_) { throw new HttpError(401, 'BAD_TOKEN', 'انتهت الجلسة، سجّل الدخول من جديد'); }
-      const user = await loadUser('u.id', payload.sub);
-      if (!user) throw new HttpError(401, 'BAD_TOKEN', 'الحساب غير موجود');
+      const user = await requireUser(req);
       res.json({ user: publicUser(user), subscription: await syncStatus(user) });
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  // تفعيل كود: يبدأ من اليوم، أو يُضاف بعد نهاية الاشتراك الحالي إن كان فعّالاً (تمديد)
+  router.post('/redeem', async (req, res, next) => {
+    const client = await pool.connect();
+    try {
+      const user = await requireUser(req);
+      const code = normalizeCode(req.body && req.body.code);
+      if (!code) throw new HttpError(400, 'INVALID_CODE', 'صيغة الكود غير صحيحة');
+
+      await client.query('BEGIN');
+      const { rows } = await client.query('SELECT * FROM activation_codes WHERE code = $1 FOR UPDATE', [code]);
+      const row = rows[0];
+      if (!row) throw new HttpError(404, 'INVALID_CODE', 'الكود غير صحيح');
+      if (row.redeemed_by) throw new HttpError(409, 'CODE_USED', 'هذا الكود مستخدم من قبل');
+
+      const now = new Date();
+      const cur = accessState(user, now);
+      const start = cur.status === 'active' && cur.subscription_ends_at ? new Date(cur.subscription_ends_at) : now;
+      const ends = new Date(start.getTime() + row.days * DAY);
+      await client.query(`UPDATE users SET subscription_status = 'active', subscription_ends_at = $2 WHERE id = $1`, [user.id, ends]);
+      await client.query('UPDATE activation_codes SET redeemed_by = $2, redeemed_at = $3 WHERE code = $1', [code, user.id, now]);
+      await client.query(
+        `INSERT INTO subscriptions (id, user_id, plan, source, starts_at, ends_at, created_at) VALUES ($1, $2, $3, 'code', $4, $5, $6)`,
+        [crypto.randomUUID(), user.id, row.plan, start, ends, now],
+      );
+      await client.query('COMMIT');
+
+      const fresh = await loadUser('u.id', user.id);
+      res.json({ user: publicUser(fresh), subscription: accessState(fresh), added_days: row.days });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      next(e);
+    } finally {
+      client.release();
+    }
+  });
+
+  // سجل الاشتراكات (الأحدث أولاً)
+  router.get('/history', async (req, res, next) => {
+    try {
+      const user = await requireUser(req);
+      const { rows } = await pool.query(
+        'SELECT id, plan, source, starts_at, ends_at, created_at FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50',
+        [user.id],
+      );
+      res.json({ history: rows });
     } catch (e) {
       next(e);
     }
@@ -136,4 +203,4 @@ function authRouter(pool, env = process.env) {
   return router;
 }
 
-module.exports = { authRouter, accessState, HttpError };
+module.exports = { authRouter, accessState, HttpError, normalizeCode, generateCode };
