@@ -2,6 +2,15 @@
 //   node scripts/codes.js 30 10      → 10 one-month codes
 //   node scripts/codes.js 365 1      → one yearly code
 // Needs DATABASE_URL (same as the API). Prints the codes, one per line.
+const fs = require('fs');
+const path = require('path');
+
+// تحميل متغيرات البيئة من .env تلقائياً إن وجد
+const envPath = path.join(__dirname, '..', '.env');
+if (fs.existsSync(envPath) && typeof process.loadEnvFile === 'function') {
+  process.loadEnvFile(envPath);
+}
+
 const { createPool, migrate } = require('../src/db');
 const { generateCode } = require('../src/auth');
 

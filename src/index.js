@@ -47,6 +47,12 @@ function createApp(pool, env = process.env) {
 
 if (require.main === module) {
   (async () => {
+    const fs = require('fs');
+    const path = require('path');
+    const envPath = path.join(__dirname, '..', '.env');
+    if (fs.existsSync(envPath) && typeof process.loadEnvFile === 'function') {
+      process.loadEnvFile(envPath);
+    }
     const pool = createPool();
     await migrate(pool);
     const port = Number(process.env.PORT) || 3000;
