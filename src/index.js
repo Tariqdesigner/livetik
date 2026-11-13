@@ -4,6 +4,7 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const { createPool, migrate } = require('./db');
 const { authRouter, HttpError } = require('./auth');
+const { adminRouter } = require('./admin');
 
 function createApp(pool, env = process.env) {
   const app = express();
@@ -35,6 +36,7 @@ function createApp(pool, env = process.env) {
   app.use('/api/auth/login', limiter);
   app.use('/api/auth/redeem', limiter); // يمنع تخمين الأكواد
   app.use('/api/auth', authRouter(pool, env));
+  app.use('/api/admin', adminRouter(pool, env));
 
   app.use((err, _req, res, _next) => {
     if (err instanceof HttpError) return res.status(err.status).json({ error: err.code, message: err.message });

@@ -16,6 +16,9 @@ function createPool(env = process.env) {
 async function migrate(pool) {
   const sql = fs.readFileSync(path.join(__dirname, '..', 'schema.sql'), 'utf8');
   await pool.query(sql);
+  try {
+    await pool.query('ALTER TABLE users ALTER COLUMN device_id DROP NOT NULL');
+  } catch (_) { /* تجاهل إن كان بالفعل يقبل NULL */ }
 }
 
 module.exports = { createPool, migrate };

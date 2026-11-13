@@ -52,7 +52,7 @@ function authRouter(pool, env = process.env) {
 
   async function loadUser(where, value) {
     const { rows } = await pool.query(
-      `SELECT u.*, d.trial_ends_at FROM users u JOIN devices d ON d.device_id = u.device_id WHERE ${where} = $1`,
+      `SELECT u.*, d.trial_ends_at FROM users u LEFT JOIN devices d ON d.device_id = u.device_id WHERE ${where} = $1`,
       [value],
     );
     return rows[0] || null;
@@ -117,11 +117,29 @@ function authRouter(pool, env = process.env) {
 
   router.post('/login', async (req, res, next) => {
     try {
-      const { email, password } = readBody(req);
+      const { email, password, deviceId } = readBody(req);
       const user = await loadUser('u.email', email);
       // نفس الرسالة للبريد غير الموجود وكلمة المرور الخاطئة حتى لا يُكشف وجود الحساب
       const ok = user && (await bcrypt.compare(password, user.password_hash));
       if (!ok) throw new HttpError(401, 'BAD_CREDENTIALS', 'البريد أو كلمة المرور غير صحيحة');
+
+      // فحص ارتباط الجهاز:
+      if (!user.device_id) {
+        // الحساب تم فك ارتباطه (Reset Device): يُربط فوراً بالجهاز الحالي
+        const platform = ['desktop', 'web', 'mobile'].includes(req.body.platform) ? req.body.platform : 'desktop';
+        await pool.query(
+          `INSERT INTO devices (device_id, platform, first_seen_at, trial_ends_at)
+           VALUES ($1, $2, now(), now() + interval '${trialDays} days')
+           ON CONFLICT (device_id) DO NOTHING`,
+          [deviceId, platform],
+        );
+        await pool.query('UPDATE users SET device_id = $1 WHERE id = $2', [deviceId, user.id]);
+        user.device_id = deviceId;
+      } else if (user.device_id !== deviceId) {
+        // الحساب مرتبط بجهاز آخر مختلف: يُمنع حتى يفك الأدمن الارتباط
+        throw new HttpError(403, 'DEVICE_MISMATCH', 'هذا الحساب مرتبط بجهاز آخر. تواصل مع الإدارة لفك الارتباط ونقل الحساب إلى هذا الجهاز.');
+      }
+
       await pool.query('UPDATE users SET last_login_at = now() WHERE id = $1', [user.id]);
       const subscription = await syncStatus(user);
       res.json({ token: sign(user), user: publicUser(user), subscription });

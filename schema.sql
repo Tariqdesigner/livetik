@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
   id                    UUID PRIMARY KEY,
   email                 TEXT NOT NULL UNIQUE,          -- stored lower-case
   password_hash         TEXT NOT NULL,                 -- bcrypt
-  device_id             TEXT NOT NULL REFERENCES devices(device_id),
+  device_id             TEXT REFERENCES devices(device_id),
   created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
   subscription_status   TEXT NOT NULL DEFAULT 'trial'
                         CHECK (subscription_status IN ('trial', 'active', 'expired', 'canceled')),
