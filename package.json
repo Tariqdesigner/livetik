@@ -2,7 +2,7 @@
   "name": "livedeck-api",
   "version": "1.0.0",
   "private": true,
-  "description": "LiveDeck accounts API: sign up / sign in, 30-day device-bound trial, subscription status",
+  "description": "LiveDeck accounts API: sign up / sign in, 7-day device-bound trial, subscription status",
   "main": "src/index.js",
   "engines": { "node": ">=18" },
   "scripts": {

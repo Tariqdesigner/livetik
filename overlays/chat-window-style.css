@@ -1,0 +1,396 @@
+/* ============================================================
+   الواجهة العامة: الإطار، الشريط العلوي، الإعدادات
+   (أشكال الرسائل نفسها في themes.css)
+   ============================================================ */
+
+:root {
+  --bg-alpha: 0.92;
+  --font: 15px;
+}
+
+/* ألوان الإطار حسب الثيم المختار */
+/* إطار واحد محايد لكل الثيمات، والثيم يغيّر اللون المميز فقط */
+body {
+  --bg-rgb: 13, 14, 18;
+  --glow: none;
+  --accent: #7c6ff7;
+  --on-accent: #ffffff;
+  --text: #f1f2f6;
+  --dim: #9096a5;
+  --line: rgba(255, 255, 255, 0.07);
+  --card: rgba(255, 255, 255, 0.05);
+  --field: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.10);
+  --scroll: rgba(255, 255, 255, 0.18);
+  --ui-font: "Tajawal", "Outfit", "Segoe UI", sans-serif;
+}
+body[data-ui="glass"]    { --accent: #e9ecf3; --on-accent: #14161c; }
+body[data-ui="cyber"]    { --accent: #ff3b5c; --on-accent: #ffffff; }
+body[data-ui="timeline"] { --accent: #3fc5d9; --on-accent: #03181c; }
+body[data-ui="classic"]  { --accent: #3ddc97; --on-accent: #04170e; }
+/* الثيمات القديمة المستعادة */
+body[data-ui="glow"]     { --accent: #4dc3ff; --on-accent: #04121c; }
+body[data-ui="pane"]     { --bg-rgb: 30, 26, 96; --accent: #c9b8ff; --on-accent: #1a1446; --dim: #aaa4dc; --border: rgba(255, 255, 255, 0.2); }
+body[data-ui="tech"]     { --bg-rgb: 14, 7, 26; --accent: #d14dff; --on-accent: #ffffff; --dim: #9c88b6; --border: rgba(209, 77, 255, 0.32); --ui-font: "Chakra Petch", "Tajawal", "Segoe UI", sans-serif; }
+body[data-ui="line"]     { --accent: #5eead4; --on-accent: #04201b; }
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  font-family: var(--ui-font);
+  color: var(--text);
+  user-select: none;
+}
+
+#panel {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(var(--bg-rgb), var(--bg-alpha));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: background 0.25s ease;
+}
+/* طبقة الإضاءة الملونة خلف الشات (تتبع الشفافية) */
+#panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--glow);
+  opacity: var(--bg-alpha);
+  pointer-events: none;
+}
+#panel > :not(#jumpDown) { position: relative; }
+
+/* ---------- الشريط العلوي ---------- */
+#titlebar {
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 8px 7px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.title { font-weight: 800; font-size: 13.5px; margin-inline-start: 4px; }
+.spacer { flex: 1; }
+.viewers { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--dim); margin-inline-end: 6px; font-family: "Outfit", sans-serif; }
+.viewers svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.viewers span { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #5a5f6b; flex-shrink: 0; }
+.status-dot.on { background: #ff3b5c; animation: live 1.6s ease-in-out infinite; }
+.status-dot.connecting { background: #f2b33d; animation: live 1s ease-in-out infinite; }
+.status-dot.ended { background: #8b4452; }
+@keyframes live { 50% { opacity: .35; } }
+
+button { font-family: inherit; cursor: pointer; }
+button.icon {
+  -webkit-app-region: no-drag;
+  display: inline-grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  color: var(--dim);
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  padding: 0;
+}
+button.icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+button.icon:hover { background: var(--card); color: var(--text); }
+#btnClose:hover { background: rgba(240, 68, 97, .18); color: #ff6b84; }
+button.icon.active { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+/* ---------- الإعدادات ---------- */
+/* الإعدادات خلفيتها ثابتة (ما تتأثر بالشفافية) عشان تكون واضحة دايم */
+#settings {
+  background: rgb(var(--bg-rgb));
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13px;
+  max-height: 62vh;
+  overflow-y: auto;
+}
+/* عناصر الإعدادات ما تنضغط فوق بعض، تتمرر بدال كذا */
+#settings > * { flex-shrink: 0; }
+.field { display: flex; flex-direction: column; gap: 6px; color: var(--dim); }
+.row { display: flex; gap: 6px; }
+input[type="text"] {
+  flex: 1;
+  background: var(--field);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  outline: none;
+  user-select: text;
+}
+input[type="text"]:focus { border-color: var(--accent); }
+button.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 0;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-weight: 700;
+}
+button.primary.danger { background: #f04461; color: #fff; }
+.field > span { font-weight: 700; color: var(--dim); }
+.field > span b { color: var(--text); font-family: "Outfit", sans-serif; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 2px 9px;
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+.chip:hover { border-color: #e74c3c; }
+.chip::after { content: " ✕"; color: #e74c3c; }
+.muted-empty { font-style: normal; font-size: 12px; }
+.hint { font-size: 11px; color: var(--dim); opacity: 0.8; }
+.inline-check { display: flex; align-items: center; gap: 6px; color: var(--text); font-weight: 600; cursor: pointer; }
+
+/* اختيار الاتجاه (يمين / يسار) */
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--field);
+  border: 1px solid var(--line);
+}
+.segmented button {
+  border: 0;
+  border-radius: 7px;
+  padding: 6px;
+  background: transparent;
+  color: var(--dim);
+  font-weight: 700;
+  font-size: 12px;
+}
+.segmented button.active { background: var(--accent); color: var(--on-accent); }
+
+/* اختيار الثيم: كل ثيم معاينة حية لشكل الرسائل */
+.themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+.theme-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+.theme-btn:hover { border-color: var(--dim); }
+.theme-btn.active { border-color: #7c6ff7; box-shadow: 0 0 0 1px #7c6ff7; }
+.preview {
+  position: relative;
+  height: 96px;
+  overflow: hidden;
+  border-radius: 8px;
+  font-size: 7.5px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  pointer-events: none;
+  text-align: start;
+}
+.preview .msg { animation: none; }
+
+/* ---------- أدوات العرض ---------- */
+#controls {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.ctrl-row { display: flex; align-items: center; gap: 10px; }
+.ctrl-row + .ctrl-row { margin-top: 8px; }
+.lbl { color: var(--dim); white-space: nowrap; }
+.ctrl-row b { min-width: 22px; text-align: center; }
+.checks { flex-wrap: wrap; gap: 6px 12px; }
+.checks label { display: flex; align-items: center; gap: 4px; font-weight: 600; cursor: pointer; }
+
+input[type="range"] { flex: 1; accent-color: var(--accent); cursor: pointer; }
+input[type="checkbox"] { accent-color: var(--accent); cursor: pointer; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 3px; }
+::-webkit-scrollbar-button { display: none; }
+
+/* ---------- منطقة التعليقات ---------- */
+#feed {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 12px 4px;
+  font-size: var(--font);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+/* الشات يبدأ من تحت: أول عنصر يدف الباقي لأسفل */
+#feed > :first-child { margin-top: auto; }
+/* إخفاء شريط التمرير الجانبي في منطقة الشات (التمرير بعجلة الماوس يبقى شغال) */
+#feed { scrollbar-width: none; }
+#feed::-webkit-scrollbar { display: none; width: 0; }
+
+.placeholder {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--dim);
+  font-size: 14px;
+  align-self: stretch;
+}
+
+#jumpDown {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* نص الحقوق تحت أحدث رسالة */
+#credit {
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+  color: var(--dim);
+  opacity: 0.7;
+  padding: 2px 0 6px;
+  letter-spacing: 0.3px;
+}
+
+/* رابط TQ: عادي وقت الشات، ورابط قابل للضغط والإعدادات مفتوحة */
+#creditLink { color: inherit; text-decoration: none; pointer-events: none; }
+body.settings-open #credit { opacity: 1; }
+body.settings-open #creditLink {
+  pointer-events: auto;
+  cursor: pointer;
+  color: #8f9cff;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+body.settings-open #creditLink:hover { color: #b3bcff; }
+
+.hidden { display: none !important; }
+
+/* ---------- مقابض تغيير الحجم ---------- */
+.rz {
+  position: fixed;
+  z-index: 100;
+  -webkit-app-region: no-drag;
+}
+.rz[data-dir="n"]  { top: 0;    left: 18px;  right: 18px; height: 10px; cursor: ns-resize; }
+.rz[data-dir="s"]  { bottom: 0; left: 18px;  right: 18px; height: 10px; cursor: ns-resize; }
+.rz[data-dir="e"]  { right: 0;  top: 18px;   bottom: 18px; width: 10px; cursor: ew-resize; }
+.rz[data-dir="w"]  { left: 0;   top: 18px;   bottom: 18px; width: 10px; cursor: ew-resize; }
+.rz[data-dir="ne"] { top: 0;    right: 0;    width: 20px; height: 20px; cursor: nesw-resize; }
+.rz[data-dir="sw"] { bottom: 0; left: 0;     width: 20px; height: 20px; cursor: nesw-resize; }
+.rz[data-dir="nw"] { top: 0;    left: 0;     width: 20px; height: 20px; cursor: nwse-resize; }
+.rz[data-dir="se"] { bottom: 0; right: 0;    width: 20px; height: 20px; cursor: nwse-resize; }
+.rz[data-dir="se"]::after,
+.rz[data-dir="sw"]::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  width: 7px;
+  height: 7px;
+  border-bottom: 2px solid var(--scroll);
+}
+.rz[data-dir="se"]::after { right: 3px; border-right: 2px solid var(--scroll); border-bottom-right-radius: 3px; }
+.rz[data-dir="sw"]::after { left: 3px;  border-left: 2px solid var(--scroll); border-bottom-left-radius: 3px; }
+body.resizing, body.resizing * { user-select: none !important; }
+body.locked .rz { display: none; }
+
+/* ---------- شفاف كامل (الشفافية = 0) ----------
+   الصندوق نفسه يختفي تماماً، ويبقى بس الكلام والرسائل */
+body.fully-clear #panel {
+  background: transparent;
+  border-color: transparent;
+}
+body.fully-clear #panel::before { display: none; }
+body.fully-clear #titlebar,
+body.fully-clear #controls { border-bottom-color: transparent; }
+body.fully-clear .rz::after { display: none; }
+/* ظل خفيف حول الكلام عشان يبان فوق أي خلفية */
+body.fully-clear #titlebar,
+body.fully-clear #controls,
+body.fully-clear #credit,
+body.fully-clear .m-system,
+body.fully-clear [data-theme="classic"],
+body.fully-clear [data-theme="timeline"] .bubble {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6);
+}
+body.fully-clear [data-theme="classic"] > .msg:hover { background: rgba(0, 0, 0, 0.25); }
+body.fully-clear .placeholder { background: rgba(0, 0, 0, 0.35); }
+
+/* ---------- الإعدادات مفتوحة ----------
+   الشريط العلوي + الإعدادات + أدوات الحجم والتفاعلات كلها بخلفية ثابتة
+   (ما تتأثر بالشفافية)، والشفافية تبقى على منطقة الشات بس */
+body.settings-open #titlebar,
+body.settings-open #controls {
+  background: rgb(var(--bg-rgb));
+  border-bottom-color: var(--line) !important;
+  text-shadow: none !important;
+}
+body.settings-open #titlebar { border-radius: 14px 14px 0 0; }
+
+/* وضع التثبيت: الشات فقط + زر 📌، والنقرات تعدّي للي تحت */
+body.locked #controls,
+body.locked #settings,
+body.locked #btnMin,
+body.locked #btnClose,
+body.locked #btnSettings,
+body.locked .title,
+body.locked #statusDot,
+body.locked .spacer,
+body.locked #jumpDown,
+body.locked .mute-btn { display: none !important; }
+body.locked #panel { border-color: transparent; }
+/* وضع التثبيت: يبقى بس 👁 عدد المشاهدين و 📌 في زاوية اليمين فوق */
+body.locked #titlebar {
+  -webkit-app-region: no-drag;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 6px 8px;
+  border-bottom-color: transparent;
+}
+body.locked .viewers { order: 1; margin: 0 4px 0 6px; }
+body.locked #btnLock { order: 2; }
+body.locked #btnLock { color: #fff; background: rgba(0, 0, 0, .45); }
+body.locked .viewers,
+body.locked button.icon { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); }

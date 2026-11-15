@@ -1,0 +1,83 @@
+/* ويدجت «آخر الأحداث» — مشترك بين الأوفرلاي ومعاينة التطبيق. كل الأصناف تبدأ بـ lt- حتى ما تتعارض مع التطبيق */
+.lt { display: inline-flex; align-items: center; gap: 30px; direction: rtl; color: #fff; padding: 26px 34px; }
+.lt.lt-side-end { flex-direction: row-reverse; }
+.lt-txt { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
+
+/* ---------- الصورة ---------- */
+.lt-pic { position: relative; flex-shrink: 0; width: 132px; height: 132px; }
+.lt-pic .pic { position: relative; width: 100%; height: 100%; }
+.lt-pic .av { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+.lt-av-glow:not(.has-frame) .av { box-shadow: 0 0 0 4px rgba(10, 8, 16, .9), 0 0 0 6px var(--nc), 0 0 calc(var(--glow) + 14px) var(--ng-a); }
+.lt-av-capsule { width: 116px; height: 148px; }
+.lt-av-capsule .av { border-radius: 58px; }
+.lt-av-capsule:not(.has-frame) .av { box-shadow: 0 0 0 4px rgba(10, 8, 16, .9), 0 0 0 6px var(--nc), 0 0 calc(var(--glow) + 10px) var(--ng-a); }
+.lt-pic.has-frame .av { box-shadow: none; }
+/* إطارات CSS الخفيفة */
+.lt-cf-ring .pic::after, .lt-cf-spin .pic::after, .lt-cf-double .pic::after, .lt-cf-dash .pic::after { content: ""; position: absolute; inset: -9px; border-radius: inherit; border-radius: 50%; pointer-events: none; }
+.lt-cf-ring .pic::after { border: 4px solid var(--nc); box-shadow: 0 0 18px var(--ng-a); }
+.lt-cf-spin .pic::after { border: 4px solid transparent; border-top-color: var(--nc); border-right-color: var(--nhi); animation: ltSpin 1.6s linear infinite; }
+.lt-cf-double .pic::after { border: 3px solid var(--nc); box-shadow: 0 0 0 5px rgba(0, 0, 0, .6), 0 0 0 8px var(--nhi); }
+.lt-cf-dash .pic::after { border: 4px dashed var(--nc); animation: ltSpin 8s linear infinite; }
+@keyframes ltSpin { to { transform: rotate(360deg); } }
+
+/* ---------- العنوان الصغير ---------- */
+.lt-title { --tc: #fff; position: relative; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 26px; letter-spacing: 4px; line-height: 1; padding: 8px 22px 9px; direction: ltr; white-space: nowrap; color: #fff; overflow: hidden; }
+.lt-t-frame { border: 3px solid var(--tc); border-radius: 99px; background: rgba(8, 6, 14, .82); box-shadow: 0 0 16px var(--tc); }
+.lt-t-filled { background: var(--tc); border-radius: 99px; color: #120b02; box-shadow: 0 0 18px var(--tc); }
+.lt-t-glass { background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .35); border-radius: 99px; backdrop-filter: blur(8px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 0 14px var(--tc); }
+.lt-t-ribbon { background: var(--tc); color: #120b02; clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%); padding-inline: 30px; }
+.lt-t-slant { background: var(--tc); color: #120b02; transform-origin: center; clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%); font-style: italic; }
+.lt-t-underline { padding: 2px 6px 8px; border-bottom: 4px solid var(--tc); color: var(--tc); text-shadow: 0 0 12px var(--tc); }
+.lt-t-none { padding: 0; color: var(--tc); text-shadow: 0 0 12px var(--tc); }
+.lt-t-filled > span, .lt-t-ribbon > span, .lt-t-slant > span { color: #120b02; }
+
+/* ---------- الاسم ---------- */
+.lt-name { position: relative; font-size: calc(110px * var(--ns)); line-height: 1.3; font-weight: 700; white-space: nowrap; max-width: 980px; overflow: visible; unicode-bidi: plaintext; padding: 0 .08em; }
+.lt-name > span { display: inline-block; }
+/* لامع: تدرّج من فاتح للون للغامق + توهج */
+.lt-n-shine > span { background: linear-gradient(180deg, var(--nhi) 8%, var(--nc) 52%, var(--nlo) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lt-n-shine, .lt-n-gradient, .lt-n-metal { filter: drop-shadow(0 0 var(--glow) var(--ng-a)); }
+/* نيون: لون صافي وتوهج مضاعف */
+.lt-n-neon > span { color: #fff; text-shadow: 0 0 4px #fff, 0 0 calc(var(--glow) * .5) var(--ng), 0 0 var(--glow) var(--ng), 0 0 calc(var(--glow) * 1.8) var(--ng); -webkit-text-stroke: 1.5px var(--nc); }
+/* متدرّج: لونين */
+.lt-n-gradient > span { background: linear-gradient(90deg, var(--n1), var(--n2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* معدني: فضي بلمعة ولون خفيف */
+.lt-n-metal > span { background: linear-gradient(180deg, #ffffff 0%, var(--nhi) 30%, #8e8e9a 48%, #f4f4f8 52%, var(--nc) 80%, #3a3a44 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* مفرّغ: حواف فقط */
+.lt-n-outline > span { color: transparent; -webkit-text-stroke: 3px var(--nc); filter: drop-shadow(0 0 var(--glow) var(--ng-a)); }
+/* سادة */
+.lt-n-plain > span { color: var(--nc); text-shadow: 0 3px 10px rgba(0, 0, 0, .5); }
+/* حافة غامقة */
+.lt-stroke > span { -webkit-text-stroke: 2.5px rgba(10, 6, 16, .85); paint-order: stroke fill; }
+.lt-n-outline.lt-stroke > span { -webkit-text-stroke: 3px var(--nc); }
+/* وميض التوهج */
+.lt-flick { animation: ltFlick 2.6s steps(1) infinite; }
+@keyframes ltFlick { 0%, 100% { opacity: 1; } 7% { opacity: calc(1 - var(--flick) * .7); } 9% { opacity: 1; } 52% { opacity: calc(1 - var(--flick) * .5); } 54% { opacity: 1; } }
+/* لمعة متحركة تمر على الحروف نفسها فقط: نسخة من النص فوقه، والضوء مقصوص على شكل الحروف
+   (بدون مستطيل يبان على الخلفية، وبدون قص للتوهج) */
+.lt-shim::after { content: attr(data-text); position: absolute; inset: 0; padding: inherit; pointer-events: none; white-space: nowrap; text-align: inherit;
+  color: transparent; -webkit-text-stroke: 0; text-shadow: none; filter: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, .85) 50%, transparent 60%) no-repeat; background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; animation: ltShim 3.2s ease-in-out infinite; }
+.lt-title.lt-shim::after { display: flex; align-items: center; justify-content: center; }
+@keyframes ltShim { 0% { background-position: 130% 0; } 60%, 100% { background-position: -130% 0; } }
+
+.lt-sub { font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 34px; color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, .6); direction: rtl; }
+
+/* ---------- حركة الدخول ---------- */
+.lt-in.lt-a-bounce { animation: ltBounce .9s cubic-bezier(.2, 1.4, .4, 1) both; }
+.lt-in.lt-a-slide { animation: ltSlide .7s cubic-bezier(.2, .9, .2, 1) both; }
+.lt-in.lt-a-zoom { animation: ltZoom .6s cubic-bezier(.2, 1.2, .3, 1) both; }
+.lt-in.lt-a-flip { animation: ltFlip .8s ease-out both; }
+.lt-in.lt-a-drop { animation: ltDrop .8s cubic-bezier(.3, 1.5, .5, 1) both; }
+.lt-in.lt-a-glitch { animation: ltGlitch .7s steps(2) both; }
+.lt-in.lt-a-fade { animation: ltFade .8s ease both; }
+@keyframes ltBounce { 0% { opacity: 0; transform: scale(.4); } 60% { opacity: 1; transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes ltSlide { from { opacity: 0; transform: translateX(80px); } }
+@keyframes ltZoom { from { opacity: 0; transform: scale(1.6); filter: blur(6px); } }
+@keyframes ltFlip { from { opacity: 0; transform: perspective(600px) rotateX(85deg); } }
+@keyframes ltDrop { from { opacity: 0; transform: translateY(-120px); } }
+@keyframes ltGlitch { 0% { opacity: 0; transform: translate(-12px, 3px) skewX(12deg); filter: hue-rotate(90deg); } 30% { opacity: 1; transform: translate(10px, -2px) skewX(-8deg); } 60% { transform: translate(-5px, 1px); filter: none; } 100% { transform: none; } }
+@keyframes ltFade { from { opacity: 0; } }
+.lt-out { animation: ltOut .45s ease forwards; }
+@keyframes ltOut { to { opacity: 0; transform: scale(.92); } }

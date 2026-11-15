@@ -1,4 +1,6 @@
 // LiveDeck API entry: express app + rate limit + CORS + error handler
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -11,6 +13,18 @@ function createApp(pool, env = process.env) {
   app.set('trust proxy', 1); // خلف بروكسي CranL: لعدّ الطلبات حسب IP الحقيقي
   app.disable('x-powered-by');
   app.use(express.json({ limit: '20kb' }));
+
+  // صفحات الأوفرلاي الثابتة على الدومين الرسمي (livedeck.live/overlay/...)
+  // تتصل بالخادم المحلي للبرنامج (127.0.0.1:21213) لاستقبال الأحداث والوسائط بدون استهلاك موارد السيرفر
+  const localOverlays = path.join(__dirname, '..', 'overlays');
+  const rootOverlays = path.join(__dirname, '..', '..', 'overlays');
+  const overlaysDir = fs.existsSync(localOverlays) ? localOverlays : rootOverlays;
+  app.use('/overlay/frames', (req, res) => res.redirect(302, 'http://127.0.0.1:21213' + req.originalUrl));
+  app.use('/media', (req, res) => res.redirect(302, 'http://127.0.0.1:21213' + req.originalUrl));
+  if (fs.existsSync(overlaysDir)) {
+    app.use('/vendor/jquery', express.static(path.join(overlaysDir, 'vendor'), { maxAge: '7d' }));
+    app.use('/overlay', express.static(overlaysDir, { maxAge: '1h' }));
+  }
 
   // الويب يحتاج CORS؛ التطبيق المكتبي يرسل بدون Origin فيُسمح له
   const origins = String(env.CORS_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);

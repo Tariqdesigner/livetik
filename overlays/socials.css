@@ -1,0 +1,385 @@
+/* بنرات حسابات التواصل — 6 ثيمات (LiveDeck Broadcast)، لكل ثيم حركة دخول خاصة */
+html, body { margin: 0; background: transparent; overflow: hidden; }
+.stage {
+  --scale: 1;
+  direction: ltr;
+  font-size: calc(22px * var(--scale));
+  font-family: "Outfit", "Tajawal", "Segoe UI", sans-serif;
+  padding: 1.4em 1.6em;
+  display: flex; flex-direction: column; align-items: flex-start; gap: .75em;
+}
+.sb-wrap { position: relative; opacity: 0; }
+.sb-wrap.in { opacity: 1; }
+.sb { position: relative; display: flex; align-items: center; }
+.sb-glyph { display: grid; place-items: center; }
+.sb-glyph svg { width: 100%; height: 100%; display: block; }
+.sb-bar { position: relative; z-index: 1; isolation: isolate; }
+.sb-cap, .sb-btn { display: none; }
+.sb-handle { white-space: nowrap; unicode-bidi: plaintext; }
+.sb i { font-style: normal; }
+.sb-wrap.out { animation: sbOut .5s ease-in both; animation-delay: calc(var(--i, 0) * .1s); }
+@keyframes sbOut { to { opacity: 0; transform: translateX(-1.6em); filter: blur(4px); } }
+
+/* ============================================================
+   طرق العرض
+   ============================================================ */
+.slot { position: relative; }
+/* --- تناوب في نفس المكان: البنرات فوق بعض في نفس الخلية --- */
+.rot { display: grid; perspective: 60em; }
+.rot > .slot { grid-area: 1 / 1; transform-style: preserve-3d; backface-visibility: hidden; }
+.fx-slide.enter { animation: fxSlideIn .75s cubic-bezier(.2, .9, .25, 1) both; }
+.fx-slide.leave { animation: fxSlideOut .6s cubic-bezier(.6, 0, .8, .4) both; }
+@keyframes fxSlideIn { from { transform: translateX(-115%); opacity: 0; filter: blur(6px); } }
+@keyframes fxSlideOut { to { transform: translateX(115%); opacity: 0; filter: blur(6px); } }
+.fx-flip.enter { animation: fxFlipIn .8s cubic-bezier(.2, 1.2, .4, 1) both; transform-origin: 50% 50%; }
+.fx-flip.leave { animation: fxFlipOut .45s ease-in both; transform-origin: 50% 50%; }
+@keyframes fxFlipIn { from { transform: rotateX(-100deg); opacity: 0; } }
+@keyframes fxFlipOut { to { transform: rotateX(100deg); opacity: 0; } }
+.fx-cube.enter { animation: fxCubeIn .8s cubic-bezier(.3, .7, .3, 1) both; transform-origin: 0% 50%; }
+.fx-cube.leave { animation: fxCubeOut .8s cubic-bezier(.3, .7, .3, 1) both; transform-origin: 100% 50%; }
+@keyframes fxCubeIn { from { transform: rotateY(90deg) translateZ(2em); opacity: 0; } 40% { opacity: 1; } }
+@keyframes fxCubeOut { to { transform: rotateY(-90deg) translateZ(2em); opacity: 0; } }
+.fx-zoom.enter { animation: fxZoomIn .7s cubic-bezier(.2, 1.3, .4, 1) both; }
+.fx-zoom.leave { animation: fxZoomOut .55s ease-in both; }
+@keyframes fxZoomIn { from { transform: scale(.25); opacity: 0; filter: blur(10px); } }
+@keyframes fxZoomOut { to { transform: scale(1.7); opacity: 0; filter: blur(10px); } }
+.fx-drop.enter { animation: fxDropIn .9s both; }
+.fx-drop.leave { animation: fxDropOut .5s cubic-bezier(.6, 0, .9, .5) both; }
+@keyframes fxDropIn { 0% { transform: translateY(-160%); opacity: 0; animation-timing-function: cubic-bezier(.5, 0, .9, .5); } 55% { transform: translateY(0); opacity: 1; animation-timing-function: ease-out; } 72% { transform: translateY(-14%); animation-timing-function: ease-in; } 86% { transform: translateY(0); } 93% { transform: translateY(-4%); } 100% { transform: none; } }
+@keyframes fxDropOut { to { transform: translateY(170%) rotate(6deg); opacity: 0; } }
+.fx-swing.enter { animation: fxSwingIn 1s both; transform-origin: 50% -1.5em; }
+.fx-swing.leave { animation: fxSwingOut .55s ease-in both; transform-origin: 50% -1.5em; }
+@keyframes fxSwingIn { 0% { transform: rotate(-70deg); opacity: 0; } 40% { transform: rotate(18deg); opacity: 1; } 60% { transform: rotate(-9deg); } 80% { transform: rotate(4deg); } 100% { transform: none; } }
+@keyframes fxSwingOut { to { transform: rotate(80deg); opacity: 0; } }
+
+/* --- المواقع: عجلة / عرض ثلاثي / بطاقات --- */
+.pos { display: grid; perspective: 50em; }
+.pos > .slot { grid-area: 1 / 1; transition: transform .85s cubic-bezier(.25, .9, .3, 1), opacity .85s ease, filter .85s ease; will-change: transform; }
+.pos > .slot.front .sb { filter: drop-shadow(0 0 .9em rgba(255, 255, 255, .12)); }
+.pos-coverflow { justify-items: center; }
+.pos-deck > .slot.fly { transition: transform .5s cubic-bezier(.6, 0, .8, .4), opacity .5s ease !important; transform: translateX(-130%) rotate(-12deg) !important; opacity: 0 !important; }
+
+/* --- تمرير مستمر --- */
+.scroller { overflow: hidden; }
+.sc-ticker { -webkit-mask: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent); mask: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent); }
+.sc-ticker .track { display: flex; flex-direction: column; gap: 14px; padding: 8px 0; animation: tickerUp 9s linear infinite; }
+.sc-marquee { width: calc(100vw - 3.2em); padding: 1.2em 0; -webkit-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.sc-marquee .track { display: flex; gap: 2.4em; width: max-content; animation: marquee 9s linear infinite; }
+@keyframes tickerUp { to { transform: translateY(-50%); } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* --- تسليط الضوء / موجة --- */
+.m-spotlight > .slot, .m-wave > .slot { transition: transform .6s cubic-bezier(.25, .9, .3, 1), opacity .6s ease, filter .6s ease; transform-origin: 0 50%; }
+.m-spotlight > .slot.dim { opacity: .38; transform: scale(.93); filter: blur(.6px) saturate(.6); }
+.m-spotlight > .slot.lit { transform: scale(1.07); }
+.m-spotlight > .slot.lit .sb { filter: drop-shadow(0 0 1em rgba(255, 255, 255, .22)); }
+.m-wave > .slot.hop { animation: hop .8s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes hop { 30% { transform: translateY(-.55em) scale(1.06); filter: brightness(1.25) drop-shadow(0 0 .8em rgba(255, 255, 255, .35)); } 60% { transform: translateY(.1em) scale(.99); } }
+
+
+/* ============================================================
+   الثيمات (المعرّفات ثابتة للتوافق مع الإعدادات المحفوظة)
+   esports = وسم · street = مقسوم · pill = كبسولة · neon = بطاقة · soft = فاتح · kawaii = بسيط
+   كل بنر: --c لون المنصة، --c2 لون ثانوي، --ct لون النص فوق لون المنصة
+   ============================================================ */
+.stage { font-family: "Outfit", "Tajawal", "Segoe UI", sans-serif; }
+.sb-handle { font-weight: 700; }
+.shine { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }
+.shine::after {
+  content: ""; position: absolute; top: -20%; bottom: -20%; width: 2em; left: -3em;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .22), transparent); transform: skewX(-18deg);
+  animation: shine 5s ease-in-out infinite; animation-delay: calc(1.8s + var(--i, 0) * .35s);
+}
+@keyframes shine { 0% { left: -3em; } 30%, 100% { left: 110%; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 50% { transform: translateY(-.15em); } }
+@keyframes popIn { from { transform: scale(0); opacity: 0; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(.35em); } }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes growX { from { transform: scaleX(0); } }
+
+/* ============================================================
+   1) وسم (esports): مربع بلون المنصة + شريط داكن بزوايا حادة
+   ============================================================ */
+.t-esports .sb { height: 2.75em; box-shadow: 0 .4em 1.1em rgba(0, 0, 0, .35); }
+.t-esports .sb-ico { position: relative; z-index: 2; width: 2.75em; height: 2.75em; flex-shrink: 0; display: grid; place-items: center; background: var(--c); border-radius: .22em 0 0 .22em; }
+.t-esports .sb-glyph { width: 1.35em; height: 1.35em; color: var(--ct); }
+.t-esports .p-tiktok .sb-glyph { filter: drop-shadow(-.06em -.04em 0 #25f4ee) drop-shadow(.06em .04em 0 #fe2c55); color: #fff; }
+.t-esports .p-tiktok .sb-ico { background: #111216; }
+.t-esports .sb-bar { height: 100%; display: flex; flex-direction: column; justify-content: center; gap: .05em; padding: 0 1.4em 0 .95em; min-width: 9.5em; background: rgba(14, 15, 19, .94); border-radius: 0 .22em .22em 0; overflow: hidden; }
+.t-esports .sb-bar::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: .12em; background: var(--c); opacity: .9; }
+.t-esports .sb-cap { display: block; font-size: .46em; font-weight: 700; letter-spacing: .26em; color: rgba(255, 255, 255, .55); }
+.t-esports .sb-handle { font-size: 1em; color: #fff; line-height: 1.15; }
+.t-esports .in .sb-ico { animation: popIn .45s cubic-bezier(.2, 1.3, .4, 1) both; animation-delay: calc(var(--i) * .15s); }
+.t-esports .in .sb-bar { animation: wipe .55s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(.2s + var(--i) * .15s); }
+.t-esports .in .sb-handle { animation: fadeUp .4s ease-out both; animation-delay: calc(.5s + var(--i) * .15s); }
+
+/* ============================================================
+   2) مقسوم (street): دائرة بلون المنصة فوق كبسولة داكنة + خط لوني يمتد
+   ============================================================ */
+.t-street .sb { height: 3em; }
+.t-street .sb-ico { position: relative; z-index: 2; width: 3em; height: 3em; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; background: var(--c); box-shadow: 0 0 0 .18em rgba(14, 15, 19, .94), 0 .4em 1em rgba(0, 0, 0, .35); }
+.t-street .sb-glyph { width: 1.45em; height: 1.45em; color: var(--ct); }
+.t-street .p-tiktok .sb-ico { background: #111216; }
+.t-street .p-tiktok .sb-glyph { color: #fff; filter: drop-shadow(-.06em -.04em 0 #25f4ee) drop-shadow(.06em .04em 0 #fe2c55); }
+.t-street .sb-bar { margin-left: -1.5em; height: 2.3em; display: flex; align-items: center; padding: 0 1.5em 0 2.1em; min-width: 9em; background: rgba(14, 15, 19, .94); border-radius: 0 999px 999px 0; box-shadow: 0 .4em 1em rgba(0, 0, 0, .3); }
+.t-street .sb-handle { font-size: 1.02em; color: #fff; }
+.t-street .uline { position: absolute; left: 2.1em; right: 1.5em; bottom: .38em; height: .12em; border-radius: .1em; background: var(--c); transform-origin: left; }
+.t-street .in .sb-ico { animation: popIn .5s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(var(--i) * .16s); }
+.t-street .in .sb-bar { animation: wipe .55s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(.2s + var(--i) * .16s); }
+.t-street .in .uline { animation: growX .6s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(.65s + var(--i) * .16s); }
+
+/* ============================================================
+   3) كبسولة (pill): كبسولة كاملة بلون المنصة
+   ============================================================ */
+.t-pill .sb { height: 2.5em; gap: .6em; padding: 0 1.4em 0 .3em; border-radius: 999px; background: var(--c); overflow: hidden; box-shadow: 0 .35em 1em rgba(0, 0, 0, .3); }
+.t-pill .sb-ico { width: 1.95em; height: 1.95em; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; background: rgba(0, 0, 0, .16); }
+.t-pill .sb-glyph { width: 1.1em; height: 1.1em; color: var(--ct); }
+.t-pill .p-tiktok { background: #111216; }
+.t-pill .p-tiktok .sb-ico { background: rgba(255, 255, 255, .1); }
+.t-pill .p-tiktok .sb-glyph { color: #fff; filter: drop-shadow(-.06em -.04em 0 #25f4ee) drop-shadow(.06em .04em 0 #fe2c55); }
+.t-pill .sb-bar { position: static; }
+.t-pill .sb-handle { font-size: .98em; color: var(--ct); }
+.t-pill .p-tiktok .sb-handle { color: #fff; }
+.t-pill .shine { border-radius: inherit; }
+.t-pill .in .sb { animation: pillIn .6s cubic-bezier(.2, 1.1, .3, 1) both; animation-delay: calc(var(--i) * .15s); transform-origin: left; }
+.t-pill .in .sb-handle { animation: fadeUp .4s ease-out both; animation-delay: calc(.35s + var(--i) * .15s); }
+@keyframes pillIn { from { clip-path: inset(0 100% 0 0 round 999px); opacity: .4; } to { clip-path: inset(0 0 0 0 round 999px); } }
+
+/* ============================================================
+   4) بطاقة (neon): بطاقة داكنة بمربع أيقونة ملون، وعبارة دعوة فوق الاسم
+   ============================================================ */
+.t-neon .sb { gap: .8em; padding: .5em 1.5em .5em .5em; min-width: 12em; border-radius: .75em; background: rgba(14, 15, 19, .94); border: 1px solid rgba(255, 255, 255, .08); box-shadow: 0 .45em 1.2em rgba(0, 0, 0, .35); }
+.t-neon .sb-ico { width: 2.4em; height: 2.4em; border-radius: .55em; display: grid; place-items: center; flex-shrink: 0; background: var(--c); }
+.t-neon .sb-glyph { width: 1.3em; height: 1.3em; color: var(--ct); }
+.t-neon .p-tiktok .sb-ico { background: #1d1f26; }
+.t-neon .p-tiktok .sb-glyph { color: #fff; filter: drop-shadow(-.06em -.04em 0 #25f4ee) drop-shadow(.06em .04em 0 #fe2c55); }
+.t-neon .sb-bar { display: flex; flex-direction: column; gap: .1em; }
+.t-neon .sb-cap { display: block; font-size: .5em; font-weight: 700; letter-spacing: .16em; color: color-mix(in srgb, var(--c) 55%, #fff); }
+.t-neon .p-x .sb-cap, .t-neon .p-threads .sb-cap { color: rgba(255, 255, 255, .6); }
+.t-neon .sb-handle { font-size: 1.18em; color: #fff; line-height: 1.12; }
+.t-neon .in .sb { animation: cardIn .6s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(var(--i) * .16s); }
+.t-neon .in .sb-ico { animation: popIn .45s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(.25s + var(--i) * .16s); }
+@keyframes cardIn { from { opacity: 0; transform: translateX(-1.4em); } }
+
+/* ============================================================
+   5) فاتح (soft): بطاقة بيضاء، أيقونة دائرية، وزر متابعة بلون المنصة
+   ============================================================ */
+.t-soft .sb { gap: .75em; padding: .45em .5em .45em .45em; min-width: 14em; border-radius: .9em; background: #f7f8fb; box-shadow: 0 .45em 1.3em rgba(0, 0, 0, .28); }
+.t-soft .sb-ico { width: 2.3em; height: 2.3em; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: var(--c); }
+.t-soft .sb-glyph { width: 1.2em; height: 1.2em; color: var(--ct); }
+.t-soft .p-x .sb-ico, .t-soft .p-threads .sb-ico, .t-soft .p-tiktok .sb-ico { background: #14161c; }
+.t-soft .p-x .sb-glyph, .t-soft .p-threads .sb-glyph, .t-soft .p-tiktok .sb-glyph { color: #fff; }
+.t-soft .sb-bar { flex: 1; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 1em; }
+.t-soft .sb-cap { display: block; grid-column: 1; font-size: .48em; font-weight: 700; letter-spacing: .2em; color: rgba(20, 22, 28, .5); }
+.t-soft .sb-handle { grid-column: 1; font-size: 1.12em; color: #14161c; line-height: 1.1; }
+.t-soft .sb-handle .at { opacity: .45; }
+.t-soft .sb-btn { display: block; grid-column: 2; grid-row: 1 / span 2; font-size: .55em; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ct); background: var(--c); padding: .7em 1.3em; border-radius: 999px; }
+.t-soft .p-x .sb-btn, .t-soft .p-threads .sb-btn, .t-soft .p-tiktok .sb-btn { background: #14161c; color: #fff; }
+.t-soft .in .sb { animation: cardIn .6s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(var(--i) * .16s); }
+.t-soft .in .sb-btn { animation: popIn .45s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(.45s + var(--i) * .16s); }
+
+/* ============================================================
+   6) بسيط (kawaii): بدون خلفية — أيقونة دائرية واسم بظل، للبثوث الهادئة
+   ============================================================ */
+.t-kawaii { gap: .6em; }
+.t-kawaii .sb { gap: .6em; }
+.t-kawaii .sb-ico { width: 2.1em; height: 2.1em; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: var(--c); box-shadow: 0 .2em .6em rgba(0, 0, 0, .4); }
+.t-kawaii .sb-glyph { width: 1.15em; height: 1.15em; color: var(--ct); }
+.t-kawaii .p-tiktok .sb-ico { background: #111216; }
+.t-kawaii .p-tiktok .sb-glyph { color: #fff; }
+.t-kawaii .sb-handle { font-size: 1.1em; color: #fff; text-shadow: 0 .06em .12em rgba(0, 0, 0, .9), 0 0 .5em rgba(0, 0, 0, .5); }
+.t-kawaii .in .sb-ico { animation: popIn .45s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(var(--i) * .14s); }
+.t-kawaii .in .sb-handle { animation: fadeUp .45s ease-out both; animation-delay: calc(.2s + var(--i) * .14s); }
+
+/* ============================================================
+   الثيمات الكلاسيكية (التصاميم الأولى بعد تحسينها)
+   arena = إي-سبورت · hexwide = سداسي عريض · tilt = كبسولة مائلة · glow = نيون · ring = ناعم · cute = كيوت
+   ============================================================ */
+@keyframes esType { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* ---------- 7) إي-سبورت: سداسي بإطار ملون + شريط مائل + اسم المنصة فوقه ---------- */
+.t-arena { gap: 1.05em; padding-top: 2em; }
+.t-arena .sb { height: 3.6em; }
+.t-arena .sb-ico {
+  position: relative; z-index: 2; width: 3.7em; height: 3.25em; flex-shrink: 0;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  background: var(--c);
+}
+.t-arena .sb-ico::before { content: ""; position: absolute; inset: .2em .24em; clip-path: inherit; background: #15161b; }
+.t-arena .sb-glyph { position: absolute; inset: 0; margin: auto; width: 1.45em; height: 1.45em; color: var(--c); }
+.t-arena .p-x .sb-glyph, .t-arena .p-threads .sb-glyph, .t-arena .p-tiktok .sb-glyph { color: #fff; }
+.t-arena .sb-bar { margin-left: -1em; height: 2.25em; display: flex; align-items: center; padding: 0 1.9em 0 1.9em; min-width: 10em; }
+.t-arena .sb-bar::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, #24252c, #16171c);
+  clip-path: polygon(0 0, 100% 0, calc(100% - .95em) 100%, 0 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.t-arena .sb-bar::after {
+  content: ""; position: absolute; left: 1.2em; right: .6em; bottom: -.38em; height: .16em;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .18) 68%, var(--c) 68%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - .25em) 100%, .25em 100%);
+}
+.t-arena .sb-cap {
+  display: block; position: absolute; left: 1.4em; top: -1.1em;
+  font: 700 .5em "Outfit", sans-serif; letter-spacing: .32em; color: var(--c);
+  padding: .32em 1.3em .28em .8em; background: #15161b;
+  clip-path: polygon(0 0, calc(100% - .7em) 0, 100% 100%, 0 100%);
+}
+.t-arena .p-x .sb-cap, .t-arena .p-threads .sb-cap { color: #fff; }
+.t-arena .sb-handle { font: 700 1.05em "Outfit", "Tajawal", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #fff; }
+.t-arena .tick { position: absolute; top: .32em; height: .12em; background: rgba(255, 255, 255, .55); }
+.t-arena .tick.t1 { right: 2.3em; width: 1em; }
+.t-arena .tick.t2 { right: 1.55em; width: .4em; background: var(--c); }
+.t-arena .shine { clip-path: polygon(0 0, 100% 0, calc(100% - .95em) 100%, 0 100%); }
+.t-arena .in .sb-ico { animation: arIco .6s cubic-bezier(.2, 1.3, .4, 1) both; animation-delay: calc(var(--i) * .16s); }
+.t-arena .in .sb-bar { animation: arBar .5s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(.22s + var(--i) * .16s); }
+.t-arena .in .sb-cap { animation: fadeUp .4s ease-out both; animation-delay: calc(.55s + var(--i) * .16s); }
+.t-arena .in .sb-handle { animation: esType .55s steps(14) both; animation-delay: calc(.5s + var(--i) * .16s); }
+@keyframes arIco { from { transform: scale(0) rotate(-120deg); opacity: 0; } }
+@keyframes arBar { from { transform: translateX(-2em); opacity: 0; } }
+
+/* ---------- 8) سداسي عريض: سداسي كبير + شريط داكن بملمس + شرائط ملونة ---------- */
+.t-hexwide { gap: 1.2em; }
+.t-hexwide .sb { height: 4.3em; }
+.t-hexwide .sb-ico {
+  position: relative; z-index: 2; width: 3.85em; height: 4.3em; flex-shrink: 0;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: var(--c);
+}
+.t-hexwide .sb-ico::before { content: ""; position: absolute; inset: .26em; clip-path: inherit; background: #1d1e23; }
+.t-hexwide .sb-glyph { position: absolute; inset: 0; margin: auto; width: 1.75em; height: 1.75em; color: #fff; }
+.t-hexwide .sb-bar { margin-left: -.7em; height: 2.45em; display: flex; align-items: center; padding: 0 2em 0 1.6em; min-width: 10em; }
+.t-hexwide .sb-bar::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 6px), linear-gradient(180deg, #2a2b31, #1c1d22);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1em) 100%, 0 100%);
+}
+.t-hexwide .sb-handle { font: 700 1.08em "Outfit", "Tajawal", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #fff; }
+.t-hexwide .strip { position: absolute; background: var(--c); }
+.t-hexwide .strip.s1 { right: 1.2em; bottom: -.34em; width: 58%; height: .28em; clip-path: polygon(.3em 0, 100% 0, calc(100% - .3em) 100%, 0 100%); transform-origin: right; }
+.t-hexwide .strip.s2 { left: .6em; top: -.28em; width: 32%; height: .22em; opacity: .85; clip-path: polygon(0 0, 100% 0, calc(100% - .25em) 100%, 0 100%); transform-origin: left; }
+.t-hexwide .in .sb-ico { animation: hwIco .65s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(var(--i) * .18s); }
+.t-hexwide .in .sb-bar { animation: arBar .55s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(.28s + var(--i) * .18s); }
+.t-hexwide .in .strip { animation: growX .45s ease-out both; animation-delay: calc(.7s + var(--i) * .18s); }
+@keyframes hwIco { from { transform: translateY(-1.5em) scale(.4); opacity: 0; } }
+
+/* ---------- 9) كبسولة مائلة: أيقونة مربعة مائلة + شريط متدرج بلون المنصة ---------- */
+.t-tilt { gap: 1em; }
+.t-tilt .sb { height: 3.3em; }
+.t-tilt .sb-ico {
+  position: relative; z-index: 2; width: 2.8em; height: 2.8em; flex-shrink: 0; border-radius: .7em;
+  background: #17181e; border: .13em solid var(--c);
+  transform: rotate(-8deg); box-shadow: 0 .3em .8em rgba(0, 0, 0, .4);
+}
+.t-tilt .sb-glyph { position: absolute; inset: 0; margin: auto; width: 1.45em; height: 1.45em; color: var(--c); }
+.t-tilt .p-snapchat .sb-glyph, .t-tilt .p-x .sb-glyph, .t-tilt .p-threads .sb-glyph, .t-tilt .p-tiktok .sb-glyph { color: #fff; }
+.t-tilt .sb-bar { margin-left: -1.2em; height: 2.2em; display: flex; align-items: center; padding: 0 1.6em 0 1.9em; min-width: 10.5em; }
+.t-tilt .sb-bar::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 0 999px 999px 0;
+  background: linear-gradient(90deg, var(--c), color-mix(in srgb, var(--c2) 70%, var(--c)));
+  box-shadow: 0 .3em .9em rgba(0, 0, 0, .3), inset 0 .1em 0 rgba(255, 255, 255, .2);
+}
+.t-tilt .p-tiktok .sb-bar::before { background: linear-gradient(100deg, #111216 50%, #2a0f1b 75%, #0b5f5c); }
+.t-tilt .sb-handle { font: 700 1.02em "Outfit", "Tajawal", sans-serif; color: var(--ct); }
+.t-tilt .p-tiktok .sb-handle { color: #fff; }
+.t-tilt .shine { border-radius: 0 999px 999px 0; }
+.t-tilt .in .sb-ico { animation: tiIco .6s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(var(--i) * .15s); }
+.t-tilt .in .sb-bar { animation: growX .5s cubic-bezier(.3, 1.1, .4, 1) both; transform-origin: left; animation-delay: calc(.25s + var(--i) * .15s); }
+.t-tilt .in .sb-handle { animation: fadeUp .4s ease-out both; animation-delay: calc(.55s + var(--i) * .15s); }
+@keyframes tiIco { from { transform: rotate(-120deg) scale(0); opacity: 0; } }
+
+/* ---------- 10) نيون: بطاقة داكنة بإطار مضيء خفيف + عبارة دعوة ---------- */
+.t-glow { gap: 1em; }
+.t-glow .sb {
+  gap: .8em; padding: .6em 1.6em .6em .65em; min-width: 12.5em; border-radius: .85em;
+  background: linear-gradient(135deg, #17142a, #0f0d1c);
+  border: .08em solid color-mix(in srgb, var(--c) 75%, transparent);
+  box-shadow: 0 0 .9em color-mix(in srgb, var(--c) 28%, transparent), 0 .4em 1em rgba(0, 0, 0, .35);
+}
+.t-glow .sb-ico { width: 2.4em; height: 2.4em; border-radius: .55em; background: var(--c); display: grid; place-items: center; flex-shrink: 0; }
+.t-glow .sb-glyph { width: 1.3em; height: 1.3em; color: var(--ct); }
+.t-glow .p-tiktok .sb-ico { background: #22222a; }
+.t-glow .p-tiktok .sb-glyph { color: #fff; }
+.t-glow .sb-bar { display: flex; flex-direction: column; }
+.t-glow .sb-cap { display: block; font: 600 .52em "Outfit", "Tajawal", sans-serif; letter-spacing: .08em; color: color-mix(in srgb, var(--c) 55%, #fff); text-transform: uppercase; }
+.t-glow .sb-handle { font: 700 1.3em "Outfit", "Tajawal", sans-serif; color: color-mix(in srgb, var(--c) 35%, #fff); line-height: 1.1; }
+.t-glow .in .sb { animation: glIn .7s cubic-bezier(.2, 1.2, .4, 1) both, glPulse 3.2s ease-in-out infinite; animation-delay: calc(var(--i) * .18s), calc(1s + var(--i) * .2s); transform-origin: 50% 0; }
+.t-glow .in .sb-ico { animation: popIn .45s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(.3s + var(--i) * .18s); }
+@keyframes glIn { from { transform: perspective(30em) rotateX(-80deg); opacity: 0; } }
+@keyframes glPulse { 50% { box-shadow: 0 0 1.4em color-mix(in srgb, var(--c) 42%, transparent), 0 .4em 1em rgba(0, 0, 0, .35); } }
+
+/* ---------- 11) ناعم: بطاقة فاتحة + أيقونة دائرية بحلقة دوّارة + زر متابعة ---------- */
+.t-ring { gap: 1em; padding-left: 3.2em; }
+.t-ring .sb {
+  height: 3.4em; min-width: 15.5em; padding-left: 2.5em; padding-right: .8em; border-radius: 1.1em;
+  background: linear-gradient(100deg, #ffffff 45%, color-mix(in srgb, var(--c) 8%, #fff));
+  box-shadow: 0 .45em 1.3em rgba(0, 0, 0, .25);
+}
+.t-ring .sb-ico { position: absolute; left: -1.85em; top: 50%; width: 3.7em; height: 3.7em; margin-top: -1.85em; border-radius: 50%; background: color-mix(in srgb, var(--c) 12%, #fff); }
+.t-ring .ring { position: absolute; inset: .4em; border-radius: 50%; background: #fff; box-shadow: 0 .15em .4em rgba(0, 0, 0, .1); }
+.t-ring .arc {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(var(--c) 0 28%, transparent 28% 55%, color-mix(in srgb, var(--c) 45%, transparent) 55% 66%, transparent 66%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - .22em), #000 calc(100% - .21em));
+  mask: radial-gradient(farthest-side, transparent calc(100% - .22em), #000 calc(100% - .21em));
+}
+.t-ring .sb-glyph { position: absolute; inset: .74em; border-radius: 50%; background: var(--c); color: var(--ct); padding: .52em; }
+.t-ring .p-x .sb-glyph, .t-ring .p-threads .sb-glyph, .t-ring .p-tiktok .sb-glyph { background: #14161c; color: #fff; }
+.t-ring .sb-bar { flex: 1; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 1em; }
+.t-ring .sb-cap { display: block; grid-column: 1; font: 700 .48em "Outfit", sans-serif; letter-spacing: .28em; color: color-mix(in srgb, var(--c) 80%, #000); }
+.t-ring .p-snapchat .sb-cap, .t-ring .p-kick .sb-cap, .t-ring .p-x .sb-cap, .t-ring .p-threads .sb-cap { color: rgba(20, 22, 28, .55); }
+.t-ring .sb-handle { grid-column: 1; font: 700 1.22em "Outfit", "Tajawal", sans-serif; color: #17181f; line-height: 1.05; }
+.t-ring .sb-handle .at { opacity: .45; }
+.t-ring .sb-btn { display: block; grid-column: 2; grid-row: 1 / span 2; font: 800 .58em "Outfit", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--ct); background: var(--c); padding: .6em 1.2em; border-radius: 999px; }
+.t-ring .p-x .sb-btn, .t-ring .p-threads .sb-btn, .t-ring .p-tiktok .sb-btn { background: #14161c; color: #fff; }
+.t-ring .in .sb { animation: riIn .7s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(var(--i) * .18s); }
+.t-ring .in .arc { animation: spin 3.2s linear infinite; }
+.t-ring .in .sb-glyph { animation: popIn .5s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(.3s + var(--i) * .18s); }
+.t-ring .in .sb-btn { animation: popIn .45s cubic-bezier(.2, 1.4, .4, 1) both, riPulse 2.8s ease-out infinite; animation-delay: calc(.55s + var(--i) * .18s), calc(1.4s + var(--i) * .3s); }
+@keyframes riIn { from { transform: translateX(-2.5em); opacity: 0; } }
+@keyframes riPulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 45%, transparent); } 70%, 100% { box-shadow: 0 0 0 .6em transparent; } }
+.t-ring .sc-marquee .track { padding-left: 2.2em; gap: 4.4em; }
+
+/* ---------- 12) كيوت: بطاقة بنفسجية فاتحة + غيمة ونجمة + أسهم بين البطاقات ---------- */
+.t-cute { gap: .35em; padding-top: 2em; padding-left: 1.6em; }
+.t-cute .sb {
+  gap: 1em; padding: .9em 2.6em .9em 1em; min-width: 14.5em; border-radius: 1.3em;
+  background: linear-gradient(180deg, #f6f2ff, #e6ddfb);
+  box-shadow: 0 .26em 0 #cdbff0, 0 .6em 1.4em rgba(40, 10, 90, .3);
+}
+.t-cute .sb-ico { position: relative; width: 2.6em; height: 2.6em; border-radius: .75em; flex-shrink: 0; background: linear-gradient(140deg, var(--c2), var(--c)); display: grid; place-items: center; box-shadow: inset 0 .1em 0 rgba(255, 255, 255, .3); }
+.t-cute .p-tiktok .sb-ico { background: linear-gradient(140deg, #19c3c0, #15151b 45%, #c21b4b); }
+.t-cute .p-x .sb-ico, .t-cute .p-threads .sb-ico { background: linear-gradient(140deg, #4a4458, #1d1a26); }
+.t-cute .sb-glyph { width: 1.4em; height: 1.4em; color: #fff; }
+.t-cute .p-snapchat .sb-glyph, .t-cute .p-kick .sb-glyph { color: #222; }
+.t-cute .heart { position: absolute; right: -.35em; bottom: -.35em; width: .95em; height: .95em; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 .1em .3em rgba(0, 0, 0, .15); }
+.t-cute .heart svg { width: .6em; height: .6em; }
+.t-cute .sb-bar { display: flex; flex-direction: column; }
+.t-cute .sb-cap { display: block; font: 700 .52em "Outfit", sans-serif; letter-spacing: .28em; color: #e5679c; }
+.t-cute .sb-handle { font: 700 1.25em "Outfit", "Tajawal", sans-serif; color: #3b2d69; line-height: 1.1; }
+.t-cute .cloud { position: absolute; left: .6em; top: -1.05em; width: 2.4em; filter: drop-shadow(0 .1em .15em rgba(80, 50, 140, .25)); }
+.t-cute .star { position: absolute; right: -.5em; top: -.7em; width: 1.5em; }
+.t-cute .dots { position: absolute; right: .95em; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: .3em; }
+.t-cute .dots b { width: .32em; height: .32em; border-radius: 50%; }
+.t-cute .dots b:nth-child(1) { background: #f9a8c9; }
+.t-cute .dots b:nth-child(2) { background: #c4b5fd; }
+.t-cute .dots b:nth-child(3) { background: #fcd34d; }
+.t-cute .cloud svg, .t-cute .star svg { width: 100%; display: block; }
+.t-cute .chev { display: block; width: .75em; height: .75em; margin: -.05em 0 .25em 7em; border-right: .2em solid #f49ac1; border-bottom: .2em solid #f49ac1; border-radius: .1em; transform: rotate(45deg); opacity: 0; }
+.t-cute .chev.in { animation: chev 1.6s ease-in-out infinite; animation-delay: calc(var(--i) * .22s + .4s); }
+.t-cute .chev.out { opacity: 0; }
+@keyframes chev { 0% { opacity: 0; transform: translateY(-.2em) rotate(45deg); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(.25em) rotate(45deg); } }
+.t-cute .in.sb-wrap { animation: cuIn .75s cubic-bezier(.2, 1.3, .4, 1) both; animation-delay: calc(var(--i) * .2s); }
+.t-cute .in .sb { animation: float 5s ease-in-out infinite; animation-delay: calc(1s + var(--i) * .6s); }
+.t-cute .in .cloud { animation: cuBob 3s ease-in-out infinite; }
+.t-cute .in .star { animation: cuTwinkle 2.4s ease-in-out infinite; }
+.t-cute .in .heart { animation: cuBeat 1.4s ease-in-out infinite; }
+.t-cute .sb-wrap.out { animation: cuOut .45s ease-in both; animation-delay: calc(var(--i) * .1s); }
+.t-cute .sc-ticker .track, .t-cute .sc-marquee { padding-top: 1.4em; }
+@keyframes cuIn { 0% { opacity: 0; transform: scale(.6) translateY(1em); } 60% { opacity: 1; transform: scale(1.03); } }
+@keyframes cuOut { to { opacity: 0; transform: scale(.75) translateY(.6em); } }
+@keyframes cuBob { 50% { transform: translateY(-.2em); } }
+@keyframes cuTwinkle { 50% { transform: rotate(20deg) scale(1.12); } }
+@keyframes cuBeat { 15%, 45% { transform: scale(1.2); } 30% { transform: scale(1); } }

@@ -10,7 +10,7 @@ const { createApp } = require('../src/index');
   const { Pool } = db.adapters.createPg();
   const pool = new Pool();
   await pool.query(fs.readFileSync(path.join(__dirname, '..', 'schema.sql'), 'utf8'));
-  const env = { JWT_SECRET: 'x'.repeat(48), TRIAL_DAYS: '30', CORS_ORIGINS: '' };
+  const env = { JWT_SECRET: 'x'.repeat(48), TRIAL_DAYS: '7', CORS_ORIGINS: '' };
   const server = createApp(pool, env).listen(0);
   const base = `http://127.0.0.1:${server.address().port}/api/auth`;
   const post = (p, body) => fetch(base + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(async (r) => ({ status: r.status, body: await r.json() }));
@@ -21,7 +21,7 @@ const { createApp } = require('../src/index');
   try {
     let r = await post('/register', { email: 'Nova@Example.com', password: 'secret123', device_id: DEV });
     ok(r.status === 201 && r.body.token, 'register creates account with token');
-    ok(r.body.subscription.status === 'trial' && r.body.subscription.days_left === 30, 'new account gets 30-day trial');
+    ok(r.body.subscription.status === 'trial' && r.body.subscription.days_left === 7, 'new account gets 7-day trial');
 
     r = await post('/register', { email: 'other@example.com', password: 'secret123', device_id: DEV });
     ok(r.status === 409 && r.body.error === 'DEVICE_TRIAL_USED', 'same device cannot start a second trial');
@@ -45,7 +45,7 @@ const { createApp } = require('../src/index');
     // انتهاء الفترة: نرجع تاريخ نهاية تجربة الجهاز إلى الماضي
     await pool.query(`UPDATE devices SET trial_ends_at = now() - interval '1 day' WHERE device_id = $1`, [DEV]);
     r = await post('/login', { email: 'nova@example.com', password: 'secret123', device_id: DEV });
-    ok(r.status === 200 && r.body.subscription.status === 'expired' && r.body.subscription.access === false, 'after 30 days access is blocked');
+    ok(r.status === 200 && r.body.subscription.status === 'expired' && r.body.subscription.access === false, 'after 7 days access is blocked');
     const row = await pool.query(`SELECT subscription_status FROM users WHERE email = 'nova@example.com'`);
     ok(row.rows[0].subscription_status === 'expired', 'expired status persisted in DB');
 

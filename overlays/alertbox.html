@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>LiveDeck Alert Box</title>
+  <link rel="stylesheet" href="alertbox-anim.css" />
+  <link rel="stylesheet" id="ld-font" />
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+    #ld-stage { position: absolute; inset: 0; display: flex; padding: 16px; box-sizing: border-box; pointer-events: none; }
+    .ld-alert { max-width: 100%; max-height: 100%; }
+    /* القوالب المخصصة تملأ الويدجت كاملاً (مثل Streamlabs) وتتحكم بموضعها بنفسها */
+    .ld-alert.ld-custom { position: absolute; inset: 0; max-width: none; max-height: none; }
+    .ld-custom #wrap { position: absolute; inset: 0; }
+    .ld-custom:not(.ld-sl) #wrap > #alert-box { position: relative; width: 100%; height: 100%; }
+    .ld-sl #alert-box { display: block; position: relative; width: 100%; height: 100%; text-align: left; gap: 0; }
+
+    /* التخطيطات */
+    #alert-box { display: flex; align-items: center; justify-content: center; gap: 12px; text-align: center; }
+    .layout-above #alert-box { flex-direction: column; }
+    .layout-left #alert-box { flex-direction: row; direction: ltr; text-align: left; }
+    .layout-right #alert-box { flex-direction: row-reverse; direction: ltr; text-align: right; }
+    .layout-over #alert-box { position: relative; display: grid; place-items: center; }
+    .layout-over #alert-box > * { grid-area: 1 / 1; }
+    .layout-over #alert-text-wrap { z-index: 1; }
+    #alert-image:empty, #alert-image-wrap:has(#alert-image:empty) { display: none; }
+    #alert-image img, #alert-image video { display: block; width: var(--ld-img-w, 50vw); max-height: 80vh; object-fit: contain; }
+
+    #alert-message {
+      font-family: var(--ld-font, Cairo), sans-serif;
+      font-size: var(--ld-fs, 64px);
+      font-weight: var(--ld-fw, 800);
+      color: var(--ld-color, #fff);
+      line-height: 1.25;
+      direction: rtl;
+      unicode-bidi: plaintext;
+      text-shadow: 0 0 1px rgba(0,0,0,.9), 0 2px 6px rgba(0,0,0,.65);
+      word-break: break-word;
+    }
+    .ld-name { color: var(--ld-hl, #32C3A6); }
+    .ld-hidden { visibility: hidden; }
+  </style>
+  <style id="ld-custom-css"></style>
+</head>
+<body>
+  <div id="ld-stage"></div>
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="overlay.js"></script>
+  <script src="alertbox.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>LiveDeck Alerts</title>
+  <link rel="stylesheet" href="ld-broadcast.css" />
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+    #stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .alert {
+      position: relative; display: flex; flex-direction: column; align-items: center; text-align: center;
+      min-width: 300px; max-width: 86vw; padding: 26px 34px 24px;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow);
+      animation: alertIn .6s var(--ease) both;
+    }
+    .alert::before { content: ""; position: absolute; top: 0; left: 26px; right: 26px; height: 3px; border-radius: 0 0 3px 3px; background: var(--k, var(--c)); }
+    .alert.out { animation: alertOut .4s ease-in forwards; }
+    .alert.gift { --k: #ffb547; }
+    .alert.follow { --k: #3ddc97; }
+    .alert.sub { --k: #b38cff; }
+    .media { position: relative; margin-top: -64px; margin-bottom: 14px; }
+    .alert img.main { display: block; max-width: 220px; max-height: 160px; filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .45)); animation: lift .7s .15s var(--ease) both; }
+    .alert img.av { display: block; width: 88px; height: 88px; border-radius: 50%; object-fit: cover; background: #23252d; border: 4px solid var(--panel-solid); box-shadow: 0 0 0 2px var(--k, var(--c)); animation: lift .7s .15s var(--ease) both; }
+    .alert .text { font-size: 34px; font-weight: 800; line-height: 1.15; unicode-bidi: plaintext; letter-spacing: -.2px; animation: ld-in .5s .25s var(--ease) both; }
+    .alert .sub {
+      margin-top: 12px; padding: 6px 14px; border-radius: 999px; font-family: var(--font-ar);
+      font-size: 18px; font-weight: 700; color: #0d0e12; background: var(--k, var(--c));
+      animation: ld-in .5s .35s var(--ease) both;
+    }
+    .alert.solo { padding-top: 22px; }
+    @keyframes alertIn { from { opacity: 0; transform: translateY(24px) scale(.96); } }
+    @keyframes alertOut { to { opacity: 0; transform: translateY(-16px) scale(.98); } }
+    @keyframes lift { from { opacity: 0; transform: translateY(14px) scale(.85); } }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <script src="overlay.js"></script>
+  <script>
+    (function () {
+      const { el, params } = Overlay;
+      const stage = document.getElementById('stage');
+      const queue = [];
+      let busy = false;
+      let duration = Number(params.get('duration')) || 5000;
+      // الهدايا الأقل من هذا العدد من الماس لا تظهر كتنبيه تلقائي
+      const minDiamonds = Number(params.get('min')) || 1;
+
+      function play(url) {
+        if (!url) return;
+        try { new Audio(url).play().catch(() => {}); } catch (_) {}
+      }
+
+      function next() {
+        if (busy || !queue.length) return;
+        busy = true;
+        const a = queue.shift();
+        const media = a.image ? el('img', { className: 'main', src: a.image, alt: '' }) : (a.avatar ? el('img', { className: 'av', src: a.avatar, alt: '' }) : null);
+        const node = el('div', { className: 'alert ' + (a.kind || '') + (media ? '' : ' solo') },
+          media ? el('div', { className: 'media' }, media) : null,
+          el('div', { className: 'text', textContent: a.text }),
+          a.sub ? el('div', { className: 'sub', textContent: a.sub }) : null);
+        stage.replaceChildren(node);
+        play(a.sound);
+        setTimeout(() => {
+          node.classList.add('out');
+          setTimeout(() => { stage.replaceChildren(); busy = false; next(); }, 400);
+        }, duration);
+      }
+
+      function push(a) {
+        if (queue.length < 30) queue.push(a);
+        next();
+      }
+
+      const name = (u) => u.nickname || u.uniqueId;
+      Overlay
+        .on('snapshot', (s) => { if (s.overlay && !params.has('duration')) duration = s.overlay.alertDurationMs || duration; })
+        .on('config', (c) => { if (c.overlay && !params.has('duration')) duration = c.overlay.alertDurationMs || duration; })
+        .on('gift', (e) => { if (e.gift.total >= minDiamonds && params.get('gifts') !== '0') push({ kind: 'gift', image: e.gift.image, avatar: e.user.avatar, text: name(e.user), sub: `أرسل ${e.gift.name} ×${e.gift.repeatCount}` }); })
+        .on('follow', (e) => { if (params.get('follows') !== '0') push({ kind: 'follow', avatar: e.user.avatar, text: name(e.user), sub: 'تابع البث' }); })
+        .on('subscribe', (e) => push({ kind: 'sub', avatar: e.user.avatar, text: name(e.user), sub: 'اشترك في القناة' }))
+        .on('custom-alert', (a) => push({ image: a.image, avatar: a.user && a.user.avatar, text: a.text, sound: a.sound }))
+        // أصوات الإجراءات تُشغَّل الآن من صفحة شاشتها (valerts.html?screen=N)
+        .on('play-sound', (m) => { if (m && m.screen === undefined) play(m.url); });
+    })();
+  </script>
+</body>
+</html>

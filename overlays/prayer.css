@@ -1,0 +1,92 @@
+/* شاشة وقت الصلاة — مسرح 1920×1080. الألوان من متغيرات يحسبها prayer.js (بدون color-mix لتوافق متصفح OBS) */
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+body.preview { background: #15121f; }
+
+.pt {
+  --p: #f2c14e; --p-hi: #fbe3a4; --p-lo: #a8802a; --p-a08: rgba(242, 193, 78, .08); --p-a15: rgba(242, 193, 78, .15); --p-a35: rgba(242, 193, 78, .35); --p-a55: rgba(242, 193, 78, .55);
+  --t: #fff6dc; --t-a70: rgba(255, 246, 220, .7); --t-a50: rgba(255, 246, 220, .5);
+  --tf: 'Aref Ruqaa'; --bf: 'El Messiri';
+  position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 50% 50%;
+  color: var(--t); font-family: var(--bf), 'Tajawal', sans-serif; direction: rtl; overflow: hidden;
+}
+/* المعاينة: مربعات تبيّن إن الخلفية شفافة */
+body.preview .pt {
+  background-color: #1a1626;
+  background-image: linear-gradient(45deg, #221d31 25%, transparent 25%, transparent 75%, #221d31 75%), linear-gradient(45deg, #221d31 25%, transparent 25%, transparent 75%, #221d31 75%);
+  background-size: 60px 60px; background-position: 0 0, 30px 30px;
+}
+/* الخلفية: طبقة فوق البث بلون وشفافية يختارها المستخدم (prayer.js يحدد اللون والنمط) */
+.pt-bg { position: absolute; inset: 0; pointer-events: none; }
+/* ألوان تتغير ورا الذهبي: بقع ضوء ناعمة تدور ألوانها */
+.pt-aurora { position: absolute; inset: 0; pointer-events: none; filter: blur(110px); opacity: .3; animation: auroraHue var(--spd, 6s) linear infinite; }
+.pt-aurora i { position: absolute; border-radius: 50%; animation: auroraMove calc(var(--spd, 6s) * 1.6) ease-in-out infinite alternate; }
+.pt-aurora i:nth-child(1) { width: 640px; height: 460px; left: 30%; top: 22%; background: var(--p); }
+.pt-aurora i:nth-child(2) { width: 560px; height: 420px; left: 46%; top: 34%; background: var(--a); animation-delay: calc(var(--spd, 6s) * -0.5); }
+.pt-aurora i:nth-child(3) { width: 520px; height: 400px; left: 36%; top: 46%; background: #7c4dff; animation-delay: calc(var(--spd, 6s) * -1); }
+@keyframes auroraHue { to { filter: blur(110px) hue-rotate(360deg); } }
+@keyframes auroraMove { from { transform: translate(-50px, -24px) scale(1); } to { transform: translate(55px, 30px) scale(1.12); } }
+
+.pt-deco, .pt-deco svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.pt-deco svg { overflow: visible; }
+
+/* ---------- المحتوى ---------- */
+.pt-content {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; text-align: center; width: 1400px;
+}
+.pt-moon { width: 76px; height: 76px; color: var(--p); filter: drop-shadow(0 0 18px var(--p-a55)); margin-bottom: 4px; }
+.pt-title {
+  font-family: var(--tf), 'Aref Ruqaa', serif; font-weight: 700; line-height: 1.15; margin: 0; padding: 0 20px; white-space: nowrap; max-width: 100%;
+  background: linear-gradient(180deg, var(--p-hi) 10%, var(--p) 55%, var(--p-lo) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 26px var(--p-a35)) drop-shadow(0 4px 2px rgba(0, 0, 0, .35));
+}
+.pt-now { display: flex; align-items: center; gap: 22px; margin-top: 6px; }
+.pt-now b { font-size: 50px; font-weight: 700; color: var(--t); text-shadow: 0 2px 10px rgba(0, 0, 0, .45); }
+.pt-pill { font-size: 36px; font-weight: 600; padding: 2px 26px 4px; border-radius: 99px; border: 2.5px solid var(--p-a55); background: rgba(0, 0, 0, .25); color: var(--t); direction: ltr; unicode-bidi: isolate; }
+.pt-pill small, .pt-card small, .pt-cd small { font-size: .78em; margin-inline-start: 6px; }
+.pt-msg { margin-top: 20px; font-size: 38px; font-weight: 600; color: var(--t); opacity: .92; text-shadow: 0 2px 10px rgba(0, 0, 0, .45); }
+.pt-div { display: flex; align-items: center; gap: 16px; margin: 22px 0 26px; color: var(--p); }
+.pt-div i { width: 7px; height: 7px; border-radius: 50%; background: var(--p); opacity: .8; }
+.pt-div u { width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid var(--p); }
+
+/* بطاقات الصلوات الخمس */
+.pt-cards { display: flex; gap: 22px; direction: rtl; }
+.pt-card {
+  min-width: 150px; padding: 14px 18px 12px; border-radius: 16px; display: grid; gap: 6px; justify-items: center;
+  background: rgba(10, 6, 18, .55); border: 2px solid var(--p-a35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.pt-card span { font-size: 26px; font-weight: 600; color: var(--t-a70); }
+.pt-card b { font-size: 38px; font-weight: 700; color: var(--t); direction: ltr; unicode-bidi: isolate; white-space: nowrap; }
+.pt-card.next { background: linear-gradient(180deg, var(--p-hi), var(--p) 70%); border-color: var(--p-hi); box-shadow: 0 0 34px var(--p-a55), inset 0 2px 0 rgba(255, 255, 255, .5); transform: translateY(-8px); }
+.pt-card.next span, .pt-card.next b { color: #2a1a05; }
+.pt-card.now { background: linear-gradient(180deg, var(--a-hi), var(--a) 70%); border-color: var(--a-hi); box-shadow: 0 0 38px var(--a-a55), inset 0 2px 0 rgba(255, 255, 255, .5); transform: translateY(-8px); animation: nowPulse 2.4s ease-in-out infinite; }
+.pt-card.now span, .pt-card.now b { color: #05230f; }
+@keyframes nowPulse { 50% { box-shadow: 0 0 60px var(--a-a55), inset 0 2px 0 rgba(255, 255, 255, .5); } }
+/* حان وقت الصلاة: اسم الصلاة ووقتها بنفس اللون */
+.pt-now.active .pt-pill { border-color: var(--a); color: var(--a-hi); box-shadow: 0 0 22px var(--a-a55); }
+
+.pt-cd { margin-top: 30px; display: flex; gap: 22px; align-items: baseline; font-size: 34px; font-weight: 700; }
+.pt-cd b { color: var(--p); direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; min-width: 120px; }
+.pt-foot { margin-top: 14px; display: flex; gap: 16px; align-items: center; font-size: 27px; color: var(--t-a70); }
+.pt-foot i { width: 10px; height: 10px; background: var(--p); transform: rotate(45deg); }
+.pt-foot .pt-city { font-weight: 700; color: var(--t); }
+
+/* ---------- الزخارف ---------- */
+.pt-stars circle { fill: var(--p-hi); animation: tw 3.4s ease-in-out infinite; }
+@keyframes tw { 0%, 100% { opacity: .15; } 50% { opacity: .9; } }
+.pt-lantern { transform-box: fill-box; transform-origin: 50% 0; animation: sway 6s ease-in-out infinite; }
+.pt-lantern.b { animation-duration: 7.5s; animation-delay: -2s; }
+@keyframes sway { 0%, 100% { transform: rotate(-2.2deg); } 50% { transform: rotate(2.2deg); } }
+.pt-glow { animation: glow 3.2s ease-in-out infinite; }
+@keyframes glow { 0%, 100% { opacity: .75; } 50% { opacity: 1; } }
+.pt-spin { transform-box: fill-box; transform-origin: 50% 50%; animation: spin 140s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.pt-in { animation: ptIn .9s cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes ptIn { from { opacity: 0; transform: translate(-50%, calc(-50% + 18px)); } }
+
+/* المحراب: المحتوى أصغر شوي حتى يتسع داخل القوس */
+.pt.th-mihrab .pt-content { top: 57%; width: 900px; }
+.pt.th-mihrab .pt-cards { gap: 14px; }
+.pt.th-mihrab .pt-card { min-width: 136px; padding: 12px 12px 10px; }
+.pt.th-mosque .pt-content { top: 35%; }

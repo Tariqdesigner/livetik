@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>LiveDeck Overlays</title>
+  <style>
+    body { font-family: "Segoe UI", Tahoma, sans-serif; background: #0b0d12; color: #eef1f7; padding: 24px; line-height: 1.8; }
+    a { color: #25f4ee; }
+    code { background: #1b2030; padding: 2px 6px; border-radius: 6px; direction: ltr; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h1>LiveDeck — صفحات الأوفرلاي</h1>
+  <ul>
+    <li><a href="chat.html">chat.html</a> — الشات. خيارات: <code>?joins=1</code> <code>?max=20</code></li>
+    <li><a href="alerts.html">alerts.html</a> — التنبيهات. خيارات: <code>?min=10</code> (أقل ماس) <code>?duration=4000</code> <code>?gifts=0</code> <code>?follows=0</code></li>
+    <li><a href="goal.html">goal.html</a> — شريط الهدف (يُضبط من الإعدادات)</li>
+    <li><a href="top.html">top.html</a> — أعلى الداعمين. خيارات: <code>?count=3</code></li>
+    <li><a href="music.html">music.html</a> — الأغنية الحالية</li>
+    <li><a href="teams.html">teams.html</a> — نقاط الفرق. خيارات: <code>?cmd=!team</code> (يعرض طريقة الانضمام)</li>
+    <li><a href="chat-window.html">chat-window.html</a> — نافذة الشات المتقدمة</li>
+  </ul>
+  <h2>للألعاب والبرامج الخارجية</h2>
+  <p>اتصل بـ <code>ws://127.0.0.1:21213/ws</code> لتستقبل كل الأحداث بصيغة JSON، مثل <code>{"type":"event","data":{"type":"gift",...}}</code>، وكذلك <code>stats</code> و <code>teams</code> و <code>music</code>.</p>
+</body>
+</html>

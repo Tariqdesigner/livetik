@@ -1,4 +1,4 @@
-// Auth routes: register (device-bound 30-day trial), login, me (fresh status for the app's periodic check)
+// Auth routes: register (device-bound 7-day trial), login, me (fresh status for the app's periodic check)
 const crypto = require('crypto');
 const express = require('express');
 const bcrypt = require('bcryptjs');
@@ -44,7 +44,7 @@ function accessState(row, now = new Date()) {
 function authRouter(pool, env = process.env) {
   const secret = env.JWT_SECRET;
   if (!secret || secret.length < 32) throw new Error('JWT_SECRET must be set (32+ characters)');
-  const trialDays = Number(env.TRIAL_DAYS) || 30;
+  const trialDays = Number(env.TRIAL_DAYS) || 7;
   const router = express.Router();
 
   const sign = (user) => jwt.sign({ sub: user.id, email: user.email }, secret, { expiresIn: '7d' });

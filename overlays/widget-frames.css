@@ -1,0 +1,177 @@
+/* إطارات صورة الحساب: طبقة فوق الصورة الدائرية، وكل إطار له حركة دخول وحركة مستمرة */
+.has-frame .pic { position: relative; background: none !important; box-shadow: none !important; padding: 0 !important; clip-path: none !important; aspect-ratio: 1; }
+.has-frame .pic::before { display: none !important; }
+/* الصورة تصغر لتملأ فتحة الإطار وتبقى في منتصف مكانها */
+.has-frame .pic > .inner, .has-frame .pic > .av { position: absolute; left: calc((1 - var(--af, 1)) * 50%); top: calc((1 - var(--af, 1)) * 50%); width: calc(var(--af, 1) * 100%); height: calc(var(--af, 1) * 100%); }
+.has-frame .inner { overflow: hidden; border: 0 !important; border-radius: 50% !important; clip-path: none !important; }
+.has-frame .inner .av { width: 100%; height: 100%; }
+.has-frame .av { border-radius: 50% !important; clip-path: none !important; }
+/* النصوص والقيم فوق الإطار حتى تبقى مقروءة */
+.has-frame .n, .has-frame .t, .has-frame .next, .has-frame .txt, .has-frame .cnt, .has-frame .val, .has-frame .user .name { position: relative; z-index: 4; }
+.has-frame.th-t3-rank .val { z-index: 2; }
+.has-frame.th-t3-rank .pic { z-index: 3; }
+.has-frame .last, .has-frame .rank { overflow: visible !important; clip-path: none !important; }
+.has-frame .last .pic { margin: .55rem; }
+.has-frame.th-lf-badge .pic { width: 7rem; height: 7rem; animation: none; }
+.has-frame.th-lf-badge .txt { margin-top: .9rem; }
+.has-frame.th-t3-hex .rank { --ring: var(--c); }
+.has-frame .num-b, .has-frame .badge { z-index: 3; }
+
+.fr { position: absolute; z-index: 2; pointer-events: none; }
+.fr i { position: absolute; inset: 0; display: block; background: var(--img) center / 100% 100% no-repeat; transform-origin: var(--ox) var(--oy); }
+.fr b { position: absolute; display: block; }
+.fr .fb { display: none; }
+
+/* إطار خلف الصورة: خطوطه الداخلية لا تغطي الوجه */
+.fr-under > .fr { z-index: 0; }
+.fr-under > .inner, .fr-under > .av { z-index: 1; }
+
+/* رسم الإطار دائرياً عند الدخول */
+@property --sweep { syntax: "<angle>"; inherits: false; initial-value: 360deg; }
+@keyframes frDraw { from { --sweep: 0deg; } to { --sweep: 360deg; } }
+@keyframes frSpin { to { rotate: 360deg; } }
+@keyframes frSpinBack { to { rotate: -360deg; } }
+.fr-draw .fa { -webkit-mask: conic-gradient(from -100deg at var(--ox) var(--oy), #000 var(--sweep), transparent 0); mask: conic-gradient(from -100deg at var(--ox) var(--oy), #000 var(--sweep), transparent 0); }
+
+/* 1) حلقة الحبر: تُرسم بفرشاة ثم تدور ببطء، وطبقة ثانية عكسها تعطيها عمقاً */
+.fr-ink-ring .fa { animation: frDraw 1.2s cubic-bezier(.45, .05, .3, 1) both, frSpin 26s linear infinite, inkGlow 3.2s ease-in-out infinite; }
+.fr-ink-ring .fb { display: block; opacity: .3; scale: 1.04; animation: frSpinBack 17s linear infinite; }
+/* حافة فاتحة خفيفة حتى لا يضيع الحبر الأسود على الخلفيات الداكنة */
+@keyframes inkGlow { 0%, 100% { filter: drop-shadow(0 0 .07rem rgba(255, 255, 255, .75)) drop-shadow(0 0 .3rem rgba(229, 23, 47, .55)); } 50% { filter: drop-shadow(0 0 .07rem rgba(255, 255, 255, .9)) drop-shadow(0 0 .65rem rgba(229, 23, 47, .95)); } }
+
+/* 2) الهلال النازف: ينسكب من الأعلى للأسفل، يتمدد قليلاً، وقطرات تسقط */
+.fr-red-drip .fa { animation: dripIn 1.5s cubic-bezier(.3, .6, .3, 1) both, dripBreath 3.6s ease-in-out 1.5s infinite; transform-origin: var(--ox) 20%; }
+@keyframes dripIn { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes dripBreath { 0%, 100% { filter: drop-shadow(0 0 .07rem rgba(255, 255, 255, .6)) drop-shadow(0 0 .2rem rgba(255, 20, 40, .4)); } 50% { transform: scaleY(1.035); filter: drop-shadow(0 0 .07rem rgba(255, 255, 255, .7)) drop-shadow(0 0 .5rem rgba(255, 20, 40, .85)); } }
+.fr-red-drip b { top: var(--t); left: var(--l); width: .3em; height: .55em; font-size: var(--ds, .9rem); border-radius: 50% 50% 50% 50% / 62% 62% 40% 40%; background: var(--dc, #e0101f); animation: dripFall var(--du) cubic-bezier(.55, 0, .9, .5) infinite; animation-delay: var(--de); opacity: 0; }
+@keyframes dripFall { 0% { opacity: 0; translate: 0 0; scale: .4; } 12% { opacity: 1; scale: 1; } 80% { opacity: 1; } 100% { opacity: 0; translate: 0 8em; scale: .75 1.3; } }
+
+/* 3) دوّامة الفرشاة: تُرسم بسرعة ثم تدور، وشرارات تتطاير */
+.fr-red-swirl .fa { animation: frDraw .9s cubic-bezier(.5, .1, .25, 1) both, frSpin 13s linear infinite, swirlBreath 2.6s ease-in-out infinite; }
+.fr-red-swirl .fb { display: block; opacity: .26; scale: 1.06; animation: frSpinBack 21s linear infinite; }
+@keyframes swirlBreath { 50% { scale: 1.035; filter: drop-shadow(0 0 .4rem rgba(255, 30, 40, .65)); } }
+
+/* شرارات تنطلق من حافة الإطار */
+.fr .sp { left: var(--ox); top: var(--oy); width: .28rem; height: .28rem; margin: -.14rem; border-radius: 50%; background: var(--spc); box-shadow: 0 0 .4rem var(--spc); opacity: 0; animation: frSpark var(--du) ease-out infinite; animation-delay: var(--de); }
+@keyframes frSpark { 0% { opacity: 0; transform: rotate(var(--an)) translateX(var(--r0)); } 18% { opacity: 1; } 100% { opacity: 0; transform: rotate(calc(var(--an) + 24deg)) translateX(var(--r1)); } }
+
+/* 4) حلقة البرق: تدور وتومض بشكل غير منتظم، وطبقة ثانية تومض في وقت مختلف */
+.fr-lightning .fa { animation: frSpin 34s linear infinite, bolt 2.3s steps(1) infinite; }
+.fr-lightning .fb { display: block; rotate: 130deg; scale: 1.03; animation: frSpinBack 23s linear infinite, boltB 1.7s steps(1) infinite; }
+@keyframes bolt { 0%, 100% { opacity: 1; filter: brightness(1); } 8% { opacity: .62; filter: brightness(1.7); } 12% { opacity: 1; filter: brightness(1.05); } 41% { opacity: .78; filter: brightness(1.9); } 45% { opacity: 1; filter: brightness(1); } 74% { opacity: .55; filter: brightness(2.1); } 78% { opacity: .95; } }
+@keyframes boltB { 0%, 100% { opacity: .12; filter: brightness(1.6); } 22% { opacity: .75; filter: brightness(2); } 28% { opacity: .15; } 63% { opacity: .85; filter: brightness(2.2); } 69% { opacity: .1; } }
+
+/* 5 و6) النار الزرقاء والطاقة السماوية: مقاطعك نفسها كشريط إطارات شفاف */
+/* شريط لقطات N×N (الافتراضي 8): العمود يتقدم كل لقطة، والصف كل N لقطات */
+.fr-sprite .fa { background-size: calc(var(--n, 8) * 100%) calc(var(--n, 8) * 100%); background-position: 0 0; animation: spX var(--tx) steps(var(--n, 8)) infinite, spY var(--ty) steps(var(--n, 8)) infinite; }
+@keyframes spX { to { background-position-x: calc(100% * var(--n, 8) / (var(--n, 8) - 1)); } }
+@keyframes spY { to { background-position-y: calc(100% * var(--n, 8) / (var(--n, 8) - 1)); } }
+.fr-sprite { animation: frPop .7s cubic-bezier(.2, 1.4, .4, 1) both; }
+@keyframes frPop { from { scale: .35; opacity: 0; } }
+
+/* ===================== إطارات المؤثرات (أجنحة، لمعة، نجوم، برق، جمر، هالة) ===================== */
+.fr-enter { animation: frRise .9s cubic-bezier(.2, 1.2, .35, 1) both; }
+@keyframes frRise { from { opacity: 0; scale: .7; filter: blur(.3rem); } }
+.fr .wg, .fr .gl, .fr .lt, .fr .au { position: absolute; display: block; pointer-events: none; }
+.fr .wg, .fr .lt { inset: 0; background: var(--img) center / 100% 100% no-repeat; }
+
+/* الأجنحة: الجزء الثابت = داخل الحلقة + الشريط الأوسط + ما تحت حد الأجنحة ، والجناحان = الباقي */
+.fr-wings .fa {
+  -webkit-mask:
+    radial-gradient(ellipse var(--rx) var(--ry) at var(--ox) var(--oy), #000 99%, transparent 100%),
+    linear-gradient(90deg, transparent var(--wl), #000 var(--wl) var(--wr), transparent var(--wr)),
+    linear-gradient(180deg, transparent var(--wy), #000 var(--wy));
+  mask:
+    radial-gradient(ellipse var(--rx) var(--ry) at var(--ox) var(--oy), #000 99%, transparent 100%),
+    linear-gradient(90deg, transparent var(--wl), #000 var(--wl) var(--wr), transparent var(--wr)),
+    linear-gradient(180deg, transparent var(--wy), #000 var(--wy));
+}
+.fr .wg {
+  -webkit-mask-composite: source-in, source-in; mask-composite: intersect;
+  animation: wingL var(--wd, 2.8s) ease-in-out infinite;
+}
+.fr .wg.wl {
+  -webkit-mask:
+    linear-gradient(90deg, #000 var(--wl), transparent var(--wl)),
+    radial-gradient(ellipse var(--rx) var(--ry) at var(--ox) var(--oy), transparent 99%, #000 100%),
+    linear-gradient(180deg, #000 var(--wy), transparent var(--wy));
+  mask:
+    linear-gradient(90deg, #000 var(--wl), transparent var(--wl)),
+    radial-gradient(ellipse var(--rx) var(--ry) at var(--ox) var(--oy), transparent 99%, #000 100%),
+    linear-gradient(180deg, #000 var(--wy), transparent var(--wy));
+  -webkit-mask-composite: source-in, source-in; mask-composite: intersect;
+}
+.fr .wg.wr {
+  -webkit-mask:
+    linear-gradient(90deg, transparent var(--wr), #000 var(--wr)),
+    radial-gradient(ellipse var(--rx) var(--ry) at var(--ox) var(--oy), transparent 99%, #000 100%),
+    linear-gradient(180deg, #000 var(--wy), transparent var(--wy));
+  mask:
+    linear-gradient(90deg, transparent var(--wr), #000 var(--wr)),
+    radial-gradient(ellipse var(--rx) var(--ry) at var(--ox) var(--oy), transparent 99%, #000 100%),
+    linear-gradient(180deg, #000 var(--wy), transparent var(--wy));
+  -webkit-mask-composite: source-in, source-in; mask-composite: intersect;
+  animation-name: wingR;
+}
+/* رفرفة: ترتفع بسرعة وتنزل بهدوء مع توقف قصير، مثل جناح حقيقي */
+@keyframes wingL { 0%, 100% { rotate: 0deg; } 35% { rotate: var(--deg); } 60% { rotate: calc(var(--deg) * -.25); } 75% { rotate: 0deg; } }
+@keyframes wingR { 0%, 100% { rotate: 0deg; } 35% { rotate: calc(var(--deg) * -1); } 60% { rotate: calc(var(--deg) * .25); } 75% { rotate: 0deg; } }
+
+/* لمعة تعبر الإطار */
+.fr .gl {
+  inset: 0; z-index: 3; mix-blend-mode: screen; opacity: .85;
+  background: linear-gradient(110deg, transparent 38%, color-mix(in srgb, var(--gc) 85%, transparent) 50%, transparent 62%) 0 0 / 300% 100% no-repeat;
+  -webkit-mask: var(--img) center / 100% 100% no-repeat; mask: var(--img) center / 100% 100% no-repeat;
+  animation: frGlint var(--gd, 4.5s) ease-in-out infinite;
+}
+@keyframes frGlint { 0% { background-position: 120% 0; } 45%, 100% { background-position: -20% 0; } }
+
+/* نبض توهج بلون التصميم */
+.fr[style*="--pc"] .fa { animation: frPulse 3.2s ease-in-out infinite; }
+/* نفس اللون في الطرفين ويتغير الانتشار فقط (مزج لونين مختلفين أعطى هالة خضراء) */
+@keyframes frPulse { 0%, 100% { filter: drop-shadow(0 0 .08rem var(--pc)); } 50% { filter: drop-shadow(0 0 .5rem var(--pc)); } }
+
+/* نجمة رباعية تتلألأ */
+.fr .tw {
+  position: absolute; left: var(--x); top: var(--y); z-index: 4;
+  width: calc(1.1rem * var(--sz)); aspect-ratio: 1; translate: -50% -50%;
+  background:
+    radial-gradient(circle, #fff 0 12%, color-mix(in srgb, var(--tc) 70%, transparent) 22%, transparent 52%),
+    linear-gradient(90deg, transparent 46%, var(--tc) 50%, transparent 54%) center / 100% 22% no-repeat,
+    linear-gradient(0deg, transparent 46%, var(--tc) 50%, transparent 54%) center / 22% 100% no-repeat;
+  opacity: 0; animation: frTw var(--du) ease-in-out var(--de) infinite;
+}
+@keyframes frTw { 0%, 100% { opacity: 0; scale: .2; rotate: 0deg; } 45% { opacity: 1; scale: 1; rotate: 45deg; } 60% { opacity: .85; scale: .8; } }
+
+/* ومضة البرق */
+.fr .lt { z-index: 3; mix-blend-mode: screen; filter: brightness(1.7) saturate(1.8) drop-shadow(0 0 .4rem var(--lc)); opacity: 0; animation: frBolt 3.4s steps(1) infinite; }
+@keyframes frBolt { 0%, 100% { opacity: 0; } 12% { opacity: .9; } 14% { opacity: .1; } 17% { opacity: .75; } 21% { opacity: 0; } 58% { opacity: 0; } 60% { opacity: .6; } 63% { opacity: 0; } }
+
+/* عيون الذئب */
+.fr .eye { position: absolute; left: var(--x); top: var(--y); z-index: 4; width: 4%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, #fff 0 14%, var(--ec) 34%, transparent 70%); animation: frEye 2.6s ease-in-out infinite; }
+@keyframes frEye { 0%, 100% { opacity: .35; scale: .7; } 50% { opacity: 1; scale: 1.25; } }
+
+/* جمر يتصاعد */
+.fr .em { position: absolute; left: var(--x); top: var(--y); z-index: 4; width: calc(.32rem * var(--es)); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, #fff3c4 0 25%, var(--ec) 60%, transparent 72%); opacity: 0; animation: frEmber var(--du) ease-out var(--de) infinite; }
+@keyframes frEmber { 0% { opacity: 0; translate: 0 0; } 15% { opacity: 1; } 100% { opacity: 0; translate: var(--dx) -260%; scale: .3; } }
+
+/* لهب يتراقص: سطوع غير منتظم */
+.fr-dragon-fire .fa { animation: frFlame 1.9s steps(1) infinite, frHeat 3.4s ease-in-out infinite; }
+@keyframes frFlame { 0%, 100% { filter: brightness(1) saturate(1); } 18% { filter: brightness(1.12) saturate(1.15); } 34% { filter: brightness(.96); } 52% { filter: brightness(1.18) saturate(1.25); } 71% { filter: brightness(1.04); } 86% { filter: brightness(1.14) saturate(1.1); } }
+@keyframes frHeat { 50% { scale: 1.012; } }
+
+/* دوران بطيء للحلقات الدائرية (فراشات، نار) مع نبض/وميض */
+.fr-spin .fa { animation: frSpin var(--sd, 40s) linear infinite, frPulse 3.2s ease-in-out infinite; }
+.fr-spin.fr-flicker .fa { animation: frSpin var(--sd, 40s) linear infinite, frFlame 1.7s steps(1) infinite; }
+
+/* ثلج يتساقط */
+.fr .sn { position: absolute; left: var(--x); top: var(--y); z-index: 4; width: calc(.3rem * var(--es)); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, #fff 0 35%, var(--ec) 60%, transparent 72%); opacity: 0; animation: frSnow var(--du) linear var(--de) infinite; }
+@keyframes frSnow { 0% { opacity: 0; translate: 0 0; } 15% { opacity: .95; } 85% { opacity: .8; } 100% { opacity: 0; translate: var(--dx) 1400%; } }
+
+/* هالة دوّارة خلف الإطار */
+.fr .au {
+  inset: auto; left: var(--ox); top: var(--oy); width: calc(var(--rx) * 2.6); aspect-ratio: 1; translate: -50% -50%; z-index: -1; border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--c1), transparent 22%, var(--c2) 45%, transparent 66%, var(--c1));
+  -webkit-mask: radial-gradient(circle, transparent 50%, #000 58%, #000 66%, transparent 75%); mask: radial-gradient(circle, transparent 50%, #000 58%, #000 66%, transparent 75%);
+  filter: blur(.35rem); opacity: .85; animation: frSpin 7s linear infinite;
+}

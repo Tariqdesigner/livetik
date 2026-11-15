@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>LiveDeck Top Gifters</title>
+  <link rel="stylesheet" href="ld-broadcast.css" />
+  <style>
+    .box { margin: 12px; padding: 14px 14px 10px; min-width: 280px; max-width: 420px; }
+    .hd { display: flex; align-items: center; gap: 10px; padding: 0 4px 12px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .hd i { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #ffc23d 16%, transparent); color: #ffc23d; }
+    .hd svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hd b { font-family: var(--font-ar); font-size: 17px; font-weight: 800; }
+    ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+    li { display: flex; align-items: center; gap: 10px; padding: 7px 4px; font-weight: 700; animation: ld-in-side .45s var(--ease) both; animation-delay: calc(var(--i) * 70ms); }
+    li + li { border-top: 1px solid rgba(255, 255, 255, .05); }
+    .rank { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: 13px; font-weight: 800; background: rgba(255, 255, 255, .07); color: var(--dim); flex-shrink: 0; }
+    li:nth-child(1) .rank { background: #ffc23d; color: #251a00; }
+    li:nth-child(2) .rank { background: #cfd5df; color: #1b1e25; }
+    li:nth-child(3) .rank { background: #d98c56; color: #2a1407; }
+    li img { width: 32px; height: 32px; }
+    .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; unicode-bidi: plaintext; text-align: start; }
+    .d { display: inline-flex; align-items: center; gap: 5px; color: #ffd36b; font-size: 15px; direction: ltr; }
+    .d svg { width: 13px; height: 13px; fill: currentColor; }
+    .empty { color: var(--dim); font-family: var(--font-ar); font-size: 14px; padding: 8px 4px; }
+  </style>
+</head>
+<body>
+  <div class="box ld-panel">
+    <div class="hd"><i><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H3v2a4 4 0 0 0 4 4M17 6h4v2a4 4 0 0 1-4 4"/></svg></i><b>أعلى الداعمين</b></div>
+    <ol id="list"></ol>
+  </div>
+  <script src="overlay.js"></script>
+  <script>
+    (function () {
+      const { el, fmt, params } = Overlay;
+      const count = Number(params.get('count')) || 5;
+      const GEM = '<svg viewBox="0 0 24 24"><path d="M12 2.5l8.5 9.5-8.5 9.5L3.5 12z"/></svg>';
+      let last = null;
+      function draw(s) {
+        const top = (s.topGifters || []).slice(0, count);
+        const key = JSON.stringify(top.map((g) => [g.uniqueId, g.diamonds]));
+        if (key === last) return;
+        last = key;
+        const list = document.getElementById('list');
+        list.replaceChildren(...top.map((g, i) => {
+          const li = el('li', {},
+            el('span', { className: 'rank', textContent: String(i + 1) }),
+            el('img', { className: 'ld-av', src: g.avatar || '', alt: '' }),
+            el('span', { className: 'name', textContent: g.nickname || g.uniqueId }),
+            el('span', { className: 'd num', innerHTML: GEM + fmt(g.diamonds) }));
+          li.style.setProperty('--i', i);
+          return li;
+        }));
+        if (!top.length) list.append(el('li', { className: 'empty', textContent: 'بانتظار أول داعم…' }));
+      }
+      Overlay.on('snapshot', (s) => s.stats && draw(s.stats)).on('stats', draw);
+    })();
+  </script>
+</body>
+</html>

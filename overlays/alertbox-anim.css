@@ -1,0 +1,85 @@
+/* حركات صندوق التنبيهات — دخول/خروج للتنبيه والنص، وحركات مستمرة لحروف الاسم */
+
+/* ===== دخول ===== */
+@keyframes ld-fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ld-fadeInUp { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: none; } }
+@keyframes ld-fadeInDown { from { opacity: 0; transform: translateY(-60px); } to { opacity: 1; transform: none; } }
+@keyframes ld-zoomIn { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
+@keyframes ld-bounceIn {
+  0% { opacity: 0; transform: scale(.3); }
+  50% { opacity: 1; transform: scale(1.08); }
+  70% { transform: scale(.95); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes ld-slideInDown { from { transform: translateY(-120vh); } to { transform: none; } }
+@keyframes ld-slideInUp { from { transform: translateY(120vh); } to { transform: none; } }
+@keyframes ld-slideInLeft { from { transform: translateX(-120vw); } to { transform: none; } }
+@keyframes ld-slideInRight { from { transform: translateX(120vw); } to { transform: none; } }
+@keyframes ld-flipInX { from { opacity: 0; transform: perspective(600px) rotateX(90deg); } 60% { transform: perspective(600px) rotateX(-12deg); } to { opacity: 1; transform: none; } }
+@keyframes ld-rotateIn { from { opacity: 0; transform: rotate(-200deg) scale(.5); } to { opacity: 1; transform: none; } }
+@keyframes ld-lightSpeedIn { from { opacity: 0; transform: translateX(100%) skewX(-30deg); } 60% { opacity: 1; transform: skewX(20deg); } 80% { transform: skewX(-5deg); } to { transform: none; } }
+
+/* ===== خروج ===== */
+@keyframes ld-fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes ld-fadeOutUp { to { opacity: 0; transform: translateY(-60px); } }
+@keyframes ld-fadeOutDown { to { opacity: 0; transform: translateY(60px); } }
+@keyframes ld-zoomOut { to { opacity: 0; transform: scale(.3); } }
+@keyframes ld-bounceOut { 20% { transform: scale(.9); } 50% { opacity: 1; transform: scale(1.1); } to { opacity: 0; transform: scale(.3); } }
+@keyframes ld-slideOutUp { to { transform: translateY(-120vh); } }
+@keyframes ld-slideOutDown { to { transform: translateY(120vh); } }
+@keyframes ld-slideOutLeft { to { transform: translateX(-120vw); } }
+@keyframes ld-slideOutRight { to { transform: translateX(120vw); } }
+@keyframes ld-flipOutX { 30% { transform: perspective(600px) rotateX(-20deg); opacity: 1; } to { opacity: 0; transform: perspective(600px) rotateX(90deg); } }
+@keyframes ld-rotateOut { to { opacity: 0; transform: rotate(200deg) scale(.5); } }
+@keyframes ld-lightSpeedOut { to { opacity: 0; transform: translateX(100%) skewX(30deg); } }
+
+[class*="ld-in-"], [class*="ld-out-"] { animation-duration: var(--ld-anim-dur, .8s); animation-fill-mode: both; animation-timing-function: ease-out; }
+.ld-in-fadeIn { animation-name: ld-fadeIn; }
+.ld-in-fadeInUp { animation-name: ld-fadeInUp; }
+.ld-in-fadeInDown { animation-name: ld-fadeInDown; }
+.ld-in-zoomIn { animation-name: ld-zoomIn; }
+.ld-in-bounceIn { animation-name: ld-bounceIn; }
+.ld-in-slideInDown { animation-name: ld-slideInDown; }
+.ld-in-slideInUp { animation-name: ld-slideInUp; }
+.ld-in-slideInLeft { animation-name: ld-slideInLeft; }
+.ld-in-slideInRight { animation-name: ld-slideInRight; }
+.ld-in-flipInX { animation-name: ld-flipInX; }
+.ld-in-rotateIn { animation-name: ld-rotateIn; }
+.ld-in-lightSpeedIn { animation-name: ld-lightSpeedIn; }
+.ld-out-fadeOut { animation-name: ld-fadeOut; animation-timing-function: ease-in; }
+.ld-out-fadeOutUp { animation-name: ld-fadeOutUp; animation-timing-function: ease-in; }
+.ld-out-fadeOutDown { animation-name: ld-fadeOutDown; animation-timing-function: ease-in; }
+.ld-out-zoomOut { animation-name: ld-zoomOut; animation-timing-function: ease-in; }
+.ld-out-bounceOut { animation-name: ld-bounceOut; animation-timing-function: ease-in; }
+.ld-out-slideOutUp { animation-name: ld-slideOutUp; animation-timing-function: ease-in; }
+.ld-out-slideOutDown { animation-name: ld-slideOutDown; animation-timing-function: ease-in; }
+.ld-out-slideOutLeft { animation-name: ld-slideOutLeft; animation-timing-function: ease-in; }
+.ld-out-slideOutRight { animation-name: ld-slideOutRight; animation-timing-function: ease-in; }
+.ld-out-flipOutX { animation-name: ld-flipOutX; animation-timing-function: ease-in; }
+.ld-out-rotateOut { animation-name: ld-rotateOut; animation-timing-function: ease-in; }
+.ld-out-lightSpeedOut { animation-name: ld-lightSpeedOut; animation-timing-function: ease-in; }
+
+/* ===== حركة حروف الاسم (مستمرة) ===== */
+.ld-ch { display: inline-block; white-space: pre; animation-duration: 1.2s; animation-iteration-count: infinite; animation-delay: calc(var(--i, 0) * 70ms); }
+@keyframes ld-t-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
+@keyframes ld-t-wave { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-0.28em); } }
+@keyframes ld-t-bounce { 0%, 100% { transform: translateY(0); animation-timing-function: ease-out; } 50% { transform: translateY(-0.35em); animation-timing-function: ease-in; } }
+@keyframes ld-t-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+@keyframes ld-t-rubberBand { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.25, .75); } 40% { transform: scale(.75, 1.25); } 60% { transform: scale(1.15, .85); } }
+@keyframes ld-t-tada { 0%, 100% { transform: scale(1); } 10%, 20% { transform: scale(.9) rotate(-3deg); } 30%, 50%, 70% { transform: scale(1.1) rotate(3deg); } 40%, 60% { transform: scale(1.1) rotate(-3deg); } }
+@keyframes ld-t-swing { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(15deg); } 40% { transform: rotate(-10deg); } 60% { transform: rotate(5deg); } 80% { transform: rotate(-5deg); } }
+@keyframes ld-t-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-3px); } 40%, 80% { transform: translateX(3px); } }
+@keyframes ld-t-jello { 0%, 100% { transform: none; } 30% { transform: skewX(-12deg); } 50% { transform: skewX(8deg); } 70% { transform: skewX(-4deg); } }
+@keyframes ld-t-glow { 0%, 100% { text-shadow: 0 0 0 transparent; } 50% { text-shadow: 0 0 .35em currentColor, 0 0 .7em currentColor; } }
+@keyframes ld-t-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-0.15em) rotate(3deg); } }
+.ld-t-wiggle .ld-ch { animation-name: ld-t-wiggle; }
+.ld-t-wave .ld-ch { animation-name: ld-t-wave; }
+.ld-t-bounce .ld-ch { animation-name: ld-t-bounce; }
+.ld-t-pulse .ld-ch { animation-name: ld-t-pulse; }
+.ld-t-rubberBand .ld-ch { animation-name: ld-t-rubberBand; }
+.ld-t-tada .ld-ch { animation-name: ld-t-tada; }
+.ld-t-swing .ld-ch { animation-name: ld-t-swing; transform-origin: top center; }
+.ld-t-shake .ld-ch { animation-name: ld-t-shake; animation-duration: .6s; }
+.ld-t-jello .ld-ch { animation-name: ld-t-jello; }
+.ld-t-glow .ld-ch { animation-name: ld-t-glow; }
+.ld-t-float .ld-ch { animation-name: ld-t-float; animation-duration: 2s; }

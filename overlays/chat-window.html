@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>LiveDeck — التعليقات</title>
+  <!-- الخطوط محفوظة داخل البرنامج (تشتغل بدون إنترنت) -->
+  <link rel="stylesheet" href="fonts/tajawal/400.css" />
+  <link rel="stylesheet" href="fonts/tajawal/500.css" />
+  <link rel="stylesheet" href="fonts/tajawal/700.css" />
+  <link rel="stylesheet" href="fonts/tajawal/800.css" />
+  <link rel="stylesheet" href="fonts/outfit/400.css" />
+  <link rel="stylesheet" href="fonts/outfit/500.css" />
+  <link rel="stylesheet" href="fonts/outfit/600.css" />
+  <link rel="stylesheet" href="fonts/outfit/700.css" />
+  <link rel="stylesheet" href="fonts/chakra-petch/500.css" />
+  <link rel="stylesheet" href="fonts/chakra-petch/600.css" />
+  <link rel="stylesheet" href="fonts/chakra-petch/700.css" />
+  <link rel="stylesheet" href="chat-window-style.css" />
+  <link rel="stylesheet" href="chat-window-themes.css" />
+</head>
+<body>
+  <div id="panel">
+    <!-- الشريط العلوي (للسحب) -->
+    <header id="titlebar">
+      <div class="status-dot" id="statusDot" title="غير متصل"></div>
+      <div class="title">التعليقات</div>
+      <div class="spacer"></div>
+      <div class="viewers" title="المشاهدين"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="viewers">0</span></div>
+      <button class="icon" id="btnLock" title="تثبيت الشات"><svg viewBox="0 0 24 24"><path d="M9 4h6l-1 6 3 3H7l3-3zM12 13v8"/></svg></button>
+      <button class="icon" id="btnSettings" title="الإعدادات"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+      <button class="icon" id="btnMin" title="تصغير"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+      <button class="icon" id="btnClose" title="إغلاق"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+    </header>
+
+    <!-- الإعدادات -->
+    <section id="settings" class="hidden">
+      <label class="field">
+        <span>اسم المستخدم في تيك توك</span>
+        <div class="row">
+          <input id="username" type="text" placeholder="@username" dir="ltr" />
+          <button id="btnConnect" class="primary">اتصال</button>
+        </div>
+      </label>
+
+      <div class="field">
+        <span>اتجاه الرسائل</span>
+        <div class="segmented" id="sidePicker">
+          <button data-side="right">يمين</button>
+          <button data-side="left">يسار</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span>الثيم</span>
+        <div id="themes" class="themes"></div>
+        <label class="inline-check">
+          <input type="checkbox" id="showAvatars" /> إظهار الصورة الشخصية بدل أيقونة الدور
+        </label>
+      </div>
+
+      <label class="field">
+        <span>الشفافية <b id="opacityVal"></b></span>
+        <input id="opacity" type="range" min="0" max="1" step="0.01" />
+      </label>
+
+      <label class="field">
+        <span>اختفاء الرسائل القديمة بعد <b id="fadeVal"></b></span>
+        <input id="fadeAfter" type="range" min="0" max="300" step="5" />
+      </label>
+
+      <label class="field">
+        <span>كلمات محظورة (افصل بفاصلة)</span>
+        <input id="blockedWords" type="text" placeholder="كلمة1, كلمة2" />
+      </label>
+
+      <div class="field">
+        <span>المستخدمين المكتومين</span>
+        <div id="mutedList" class="chips"><em class="muted-empty">لا يوجد</em></div>
+      </div>
+
+      <div class="hint">التثبيت: الشات يثبت مكانه وتقدر تضغط على اللي تحته</div>
+      <div class="hint" id="shortcutsHint" dir="rtl"></div>
+    </section>
+
+    <!-- أدوات العرض -->
+    <section id="controls">
+      <div class="ctrl-row">
+        <span class="lbl">حجم المحتوى</span>
+        <input id="fontSize" type="range" min="10" max="32" step="1" />
+        <b id="fontSizeVal">15</b>
+      </div>
+      <div class="ctrl-row checks">
+        <span class="lbl">التفاعلات</span>
+        <label><input type="checkbox" data-show="gift" /> الهدايا</label>
+        <label><input type="checkbox" data-show="follow" /> المتابعات</label>
+        <label><input type="checkbox" data-show="share" /> المشاركات</label>
+        <label><input type="checkbox" data-show="member" /> الدخول</label>
+      </div>
+    </section>
+
+    <!-- التعليقات -->
+    <main id="feed" data-theme="neon" data-side="right">
+      <div class="placeholder" id="placeholder">بانتظار التعليقات...</div>
+    </main>
+    <footer id="credit">تم البناء بواسطة : <a id="creditLink" title="سيرفر TQ في الديسكورد">TQ</a></footer>
+    <button id="jumpDown" class="hidden">↓ تعليقات جديدة</button>
+  </div>
+
+  <!-- مقابض تغيير الحجم: الحواف والزوايا -->
+  <div class="rz" data-dir="n"></div>
+  <div class="rz" data-dir="s"></div>
+  <div class="rz" data-dir="e"></div>
+  <div class="rz" data-dir="w"></div>
+  <div class="rz" data-dir="ne"></div>
+  <div class="rz" data-dir="nw"></div>
+  <div class="rz" data-dir="se"></div>
+  <div class="rz" data-dir="sw"></div>
+
+  <script src="overlay.js"></script>
+  <script src="chat-messages.js"></script>
+  <script src="chat-window.js"></script>
+</body>
+</html>

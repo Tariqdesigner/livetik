@@ -1,0 +1,320 @@
+/* ثيمات التركيبات (LiveDeck Broadcast): الصنف th-<id> على <html> يحدد الثيم.
+   أول ثيم لكل تركيبة هو التصميم الأساسي في widget.css. المعرّفات ثابتة للتوافق مع الإعدادات المحفوظة. */
+
+/* ================= أنماط مشتركة ================= */
+/* فاتح: بطاقة بيضاء ونص داكن */
+.th-ll-glass .last, .th-lf-notify .last, .th-vw-led .viewers, .th-tg-royal .gift-w, .th-gg-hex .gallery .g {
+  background: rgba(247, 248, 251, .97); color: #14161c; border-color: transparent;
+  --panel-solid: #f7f8fb; --ct: color-mix(in srgb, var(--c) 82%, #000); --dim: rgba(20, 22, 28, .6);
+}
+
+/* ================= آخر إعجاب ================= */
+/* ll-heart = كتلة لونية: مربع بلون الويدجت فيه القلب، والاسم بجانبه */
+.th-ll-heart .last { gap: 0; padding: 0 1.6rem 0 0; overflow: hidden; }
+.th-ll-heart .bigheart { display: block; align-self: stretch; width: 5rem; padding: 1.35rem; background: var(--c); fill: #fff; flex-shrink: 0; }
+.th-ll-heart .pic { width: 3.2rem; height: 3.2rem; margin: .8rem 1rem; box-shadow: none; }
+.th-ll-heart .badge { display: none; }
+.th-ll-heart .last.pop .bigheart { animation: heartIn .6s .1s var(--ease) both; }
+@keyframes heartIn { from { transform: scale(.4); opacity: 0; } }
+
+/* ll-glass = فاتح */
+.th-ll-glass .last .pic { box-shadow: 0 0 0 .18rem #f7f8fb, 0 0 0 .32rem var(--c); }
+.th-ll-glass .last .cnt { background: color-mix(in srgb, var(--c) 14%, #fff); }
+
+/* ll-lower = شريط سفلي: وسم لوني فوق شريط داكن بزوايا حادة */
+.th-ll-lower .last, .th-lf-lower .last { gap: 0; padding: 0; border-radius: .2rem; background: none; border: 0; box-shadow: none; align-items: stretch; animation: slideX .6s var(--ease) both; }
+.th-ll-lower .pic, .th-lf-lower .pic { width: 4.4rem; height: auto; aspect-ratio: auto; margin: 0; border-radius: .2rem 0 0 .2rem; box-shadow: none; overflow: hidden; }
+.th-ll-lower .pic .av, .th-lf-lower .pic .av { border-radius: 0; }
+.th-ll-lower .badge, .th-lf-lower .badge { display: none; }
+.th-ll-lower .txt, .th-lf-lower .txt { display: flex; flex-direction: column; justify-content: center; }
+.th-ll-lower .last small, .th-lf-lower .last small { align-self: flex-start; padding: .15rem .7rem; background: var(--c); color: #fff; font-size: .8rem; }
+.th-ll-lower .last b, .th-lf-lower .last b { padding: .35rem 1.6rem .4rem .8rem; background: var(--panel-solid); font-size: 1.5rem; }
+.th-ll-lower .last .cnt { align-self: flex-end; margin: 0; border-radius: 0 .2rem .2rem 0; background: var(--panel-solid); padding: .45rem .9rem; }
+
+/* ll-minimal = بسيط: بدون خلفية */
+.th-ll-minimal .last, .th-lf-badge .last { background: none; border: 0; box-shadow: none; padding: 0; gap: .8rem; min-width: 0; }
+.th-ll-minimal .pic { width: 3rem; height: 3rem; box-shadow: 0 .2rem .6rem rgba(0, 0, 0, .5); margin: 0; }
+.th-ll-minimal .badge { width: 1.2rem; height: 1.2rem; box-shadow: none; }
+.th-ll-minimal .badge svg { width: .7rem; height: .7rem; }
+.th-ll-minimal .last small { color: #fff; display: flex; align-items: center; gap: .4rem; text-shadow: 0 .06rem .2rem #000; }
+.th-ll-minimal .last small::before { content: ""; width: 1rem; height: .18rem; border-radius: .1rem; background: var(--c); }
+.th-ll-minimal .last b { font-size: 1.5rem; text-shadow: 0 .08rem .3rem #000, 0 0 .8rem rgba(0, 0, 0, .5); }
+.th-ll-minimal .cnt { background: none; padding: 0; color: #fff; text-shadow: 0 .08rem .3rem #000; }
+
+/* ================= المتابعة ================= */
+/* lf-welcome = رأس لوني: بطاقة برأس بلون الويدجت والصورة تتوسطه */
+.th-lf-welcome .last { flex-direction: column; text-align: center; min-width: 15rem; gap: .2rem; padding: 0 1.4rem 1rem; overflow: hidden; }
+.th-lf-welcome .last::before { content: ""; position: absolute; inset: 0 0 auto; height: 3.2rem; background: var(--c); }
+.th-lf-welcome .pic { z-index: 1; width: 4.4rem; height: 4.4rem; margin-top: 1.2rem; box-shadow: 0 0 0 .25rem var(--panel-solid); }
+.th-lf-welcome .badge { display: none; }
+.th-lf-welcome .txt { z-index: 1; }
+.th-lf-welcome .last small { color: var(--dim); }
+
+/* lf-notify = فاتح بشكل إشعار */
+.th-lf-notify .last { border-radius: 1.3rem; padding: .7rem 1.4rem .7rem .7rem; animation: dropIn .55s var(--ease) both; }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-1.5rem); } }
+.th-lf-notify .pic { border-radius: .8rem; box-shadow: none; margin: 0; }
+.th-lf-notify .pic .av { border-radius: .8rem; }
+.th-lf-notify .badge { box-shadow: 0 0 0 .16rem #f7f8fb; }
+
+/* lf-badge = شارة: صورة كبيرة بحلقة لونية والاسم في كبسولة تحتها */
+.th-lf-badge .last { flex-direction: column; text-align: center; gap: 0; }
+.th-lf-badge .pic { width: 6.6rem; height: 6.6rem; box-shadow: 0 0 0 .25rem var(--panel-solid), 0 0 0 .45rem var(--c), 0 .6rem 1.4rem rgba(0, 0, 0, .45); animation: popBadge .6s var(--ease) both; }
+@keyframes popBadge { from { transform: scale(.6); opacity: 0; } }
+.th-lf-badge .badge { right: .1rem; bottom: .1rem; width: 1.8rem; height: 1.8rem; }
+.th-lf-badge .txt { margin-top: -.6rem; z-index: 1; padding: .35rem 1.3rem .4rem; border-radius: .7rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow); animation: rise .5s .2s var(--ease) both; }
+.th-lf-badge .last small { font-size: .75rem; }
+.th-lf-badge .last b { font-size: 1.35rem; }
+
+/* lf-lower = شريط سفلي (مشترك مع ll-lower أعلاه) */
+
+/* ================= عدد المتابعين ================= */
+/* tf-goal = الهدف التالي: حلقة تقدّم حول الصورة */
+.th-tf-goal .total .pic { padding: .42rem; background: conic-gradient(var(--c) var(--pct, 0%), rgba(255, 255, 255, .1) 0); box-shadow: none; }
+.th-tf-goal .total .pic .av { border: .2rem solid var(--panel-solid); }
+.th-tf-goal .next { display: block; }
+
+/* tf-odometer = عدّاد لوحات: كل رقم في لوحة */
+.th-tf-odometer .total { width: auto; background: none; border: 0; box-shadow: none; padding: 0; overflow: visible; }
+.th-tf-odometer .total::before, .th-tf-odometer .pic { display: none; }
+.th-tf-odometer .n { display: flex; justify-content: center; gap: .3rem; font-size: 4.2rem; }
+.th-tf-odometer .n span { min-width: 3rem; padding: .25rem .2rem .3rem; border-radius: .5rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: inset 0 -.22rem 0 var(--c), var(--shadow); }
+.th-tf-odometer .n span.sep { min-width: 0; padding: 0; background: none; border: 0; box-shadow: none; color: var(--ct); }
+.th-tf-odometer .t { display: inline-block; margin-top: .7rem; padding: .25rem .9rem; border-radius: 9rem; background: var(--panel); color: #fff; }
+
+/* tf-plaque = شريط أفقي: الصورة يسار والرقم والعنوان يمين */
+.th-tf-plaque .total { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 1rem; align-items: center; width: auto; min-width: 19rem; padding: .8rem 1.6rem .8rem .8rem; text-align: start; direction: ltr; }
+.th-tf-plaque .pic { grid-row: 1 / span 2; width: 4rem; height: 4rem; margin: 0 0 0 .3rem; }
+.th-tf-plaque .n { font-size: 2.4rem; align-self: end; }
+.th-tf-plaque .t { margin: 0; align-self: start; direction: rtl; text-align: left; }
+
+/* tf-minimal = رقم كبير بدون خلفية */
+.th-tf-minimal .total { width: auto; background: none; border: 0; box-shadow: none; padding: 0; overflow: visible; }
+.th-tf-minimal .total::before, .th-tf-minimal .pic { display: none; }
+.th-tf-minimal .n { font-size: 6.5rem; letter-spacing: -.03em; text-shadow: 0 .2rem .8rem rgba(0, 0, 0, .7); line-height: 1; }
+.th-tf-minimal .t { display: inline-block; margin-top: .4rem; padding-top: .3rem; border-top: .2rem solid var(--c); font-size: 1.25rem; color: #fff; text-shadow: 0 .1rem .3rem #000; }
+
+/* ================= أفضل 3 ================= */
+/* t3-podium = منصة تتويج: أعمدة بارتفاع المركز */
+.th-t3-podium .podium { gap: .5rem; }
+.th-t3-podium .rank, .th-t3-podium .rank.r1 { width: 9.5rem; }
+.th-t3-podium .pic { width: 5.4rem; margin: 0 auto -.8rem; z-index: 1; }
+.th-t3-podium .r1 .pic { width: 6.4rem; }
+.th-t3-podium .num-b { display: none; }
+.th-t3-podium .val { position: relative; margin: 0; padding: 1.3rem .5rem .5rem; border-radius: .6rem .6rem 0 0; height: 5.5rem; background: var(--panel); border: 0; box-shadow: inset 0 .25rem 0 var(--ring); animation: riseUp .7s var(--ease) both; animation-delay: calc(var(--k) * .12s); transform-origin: bottom; }
+.th-t3-podium .r1 .val { height: 8.5rem; }
+.th-t3-podium .r2 .val { height: 7rem; }
+@keyframes riseUp { from { transform: scaleY(0); } }
+.th-t3-podium .val .name { font-size: .95rem; }
+.th-t3-podium .val b { font-size: 1.35rem; }
+
+/* t3-board = لوحة الصدارة: صفوف بشريط حسب قيمة الدعم */
+.th-t3-board .podium { flex-direction: column; align-items: center; gap: .45rem; padding: 0; }
+.th-t3-board .rank, .th-t3-board .rank.r1 { display: flex; align-items: center; gap: .8rem; width: 28rem; order: 0; text-align: start; padding: .5rem 1rem .5rem .5rem; border-radius: .8rem; background: linear-gradient(90deg, color-mix(in srgb, var(--ring) 20%, var(--panel-solid)) var(--w, 40%), var(--panel) var(--w, 40%)); border: .06rem solid var(--line); box-shadow: var(--shadow); }
+.th-t3-board .rank.r1 { order: -1; }
+.th-t3-board .rank.r3 { order: 1; }
+.th-t3-board .pic, .th-t3-board .r1 .pic { width: 3.1rem; padding: .18rem; flex-shrink: 0; box-shadow: none; }
+.th-t3-board .inner { border-width: .12rem; }
+.th-t3-board .num-b { left: auto; right: -.35rem; bottom: -.35rem; transform: none; width: 1.35rem !important; height: 1.35rem !important; font-size: .75rem !important; }
+.th-t3-board .val { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0; padding: 0; background: none; border: 0; }
+.th-t3-board .val .name { font-size: 1.2rem; color: #fff; }
+.th-t3-board .val b { font-size: 1.35rem; }
+
+/* t3-cards = بطاقات: ثلاث بطاقات داكنة بشريط علوي بلون المركز */
+.th-t3-cards .podium { gap: .8rem; align-items: center; padding-top: 0; }
+.th-t3-cards .rank, .th-t3-cards .rank.r1 { width: 9.5rem; padding: 1rem .8rem .9rem; border-radius: 1rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: inset 0 .25rem 0 var(--ring), var(--shadow); }
+.th-t3-cards .rank.r1 { width: 11rem; padding-block: 1.3rem 1.1rem; }
+.th-t3-cards .pic { padding: 0; background: none; box-shadow: none; border-radius: .7rem; }
+.th-t3-cards .inner { border-radius: .7rem; border: 0; }
+.th-t3-cards .inner .av { border-radius: .7rem; }
+.th-t3-cards .num-b { left: .35rem; top: .35rem; bottom: auto; transform: none; box-shadow: none; }
+.th-t3-cards .val { margin: .7rem 0 0; padding: 0; background: none; border: 0; }
+
+/* t3-hex = شريط واحد: الثلاثة في صف مضغوط داخل شريط داكن */
+.th-t3-hex .podium { gap: 0; padding: .55rem .4rem; align-items: center; border-radius: 9rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow); }
+.th-t3-hex .rank, .th-t3-hex .rank.r1 { display: flex; align-items: center; gap: .6rem; width: auto; order: 0; padding: 0 1.1rem 0 .3rem; text-align: start; animation: none; }
+.th-t3-hex .rank + .rank { border-left: .06rem solid var(--line); }
+.th-t3-hex .rank.r1 { order: -1; }
+.th-t3-hex .rank.r3 { order: 1; }
+.th-t3-hex .pic, .th-t3-hex .r1 .pic { width: 2.9rem; padding: .16rem; box-shadow: none; flex-shrink: 0; }
+.th-t3-hex .inner { border-width: .12rem; }
+.th-t3-hex .num-b { width: 1.2rem !important; height: 1.2rem !important; font-size: .7rem !important; bottom: -.3rem; box-shadow: 0 0 0 .12rem var(--panel-solid); }
+.th-t3-hex .val { margin: 0; padding: 0; background: none; border: 0; }
+.th-t3-hex .val .name { max-width: 7rem; font-size: .95rem; }
+.th-t3-hex .val b { font-size: 1.05rem; }
+
+/* t3-rank = صفوف الترتيب: صفوف بصورة ورقم وقيمة بقلب، وخط تقدّم تحت الاسم */
+.th-t3-rank .podium { flex-direction: column; align-items: stretch; gap: .6rem; padding-top: 0; }
+.th-t3-rank .rank, .th-t3-rank .rank.r1 { display: flex; align-items: center; gap: .9rem; width: 28rem; order: 0; text-align: start; padding: .55rem 1.1rem .55rem .55rem; border-radius: .9rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow); animation: slideX .55s var(--ease) both; animation-delay: calc(var(--k) * .12s); }
+.th-t3-rank .rank.r1 { order: -1; }
+.th-t3-rank .rank.r3 { order: 1; }
+.th-t3-rank .pic, .th-t3-rank .r1 .pic { width: 3.6rem; padding: .2rem; flex-shrink: 0; box-shadow: none; }
+.th-t3-rank .inner { border-width: .15rem; }
+.th-t3-rank .num-b { left: -.3rem; right: auto; bottom: -.3rem; transform: none; width: 1.5rem; height: 1.5rem; font-size: .85rem; }
+.th-t3-rank .rank.r1 .num-b { width: 1.5rem; height: 1.5rem; font-size: .85rem; }
+.th-t3-rank .val { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0; padding: 0 0 .5rem; background: none; border: 0; }
+.th-t3-rank .val .name { font-size: 1.25rem; color: #fff; }
+.th-t3-rank .val b { display: flex; align-items: center; gap: .35rem; font-size: 1.3rem; color: #fff; }
+.th-t3-rank .hrt { width: 1.05rem; height: 1.05rem; fill: #ff3b5c; }
+.th-t3-rank .line { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: .18rem; border-radius: .2rem; background: rgba(255, 255, 255, .1); }
+.th-t3-rank .line::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); border-radius: inherit; background: var(--ring); transition: width .7s ease; transform-origin: left; animation: growX .8s var(--ease) both; animation-delay: calc(.3s + var(--k) * .12s); }
+
+/* ================= أعلى هدية ================= */
+/* tg-royal = فاتح */
+.th-tg-royal .gift-w .glow { background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 30%, transparent), transparent); }
+.th-tg-royal .gift-w .amt { background: color-mix(in srgb, var(--c) 14%, #fff); }
+
+/* tg-trophy = منصة عرض: الهدية فوق قاعدة بلون الويدجت، بدون بطاقة */
+.th-tg-trophy .gift-w { background: none; border: 0; box-shadow: none; }
+.th-tg-trophy .gift-w .title { display: inline-block; padding: .25rem 1rem; border-radius: 9rem; background: var(--c); color: #fff; letter-spacing: .16em; }
+.th-tg-trophy .glow { display: none; }
+.th-tg-trophy .stage::after { content: ""; position: absolute; left: 25%; right: 25%; bottom: .2rem; height: 1.4rem; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 70%, #fff), color-mix(in srgb, var(--c) 40%, #111)); box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .55); z-index: 0; }
+.th-tg-trophy .img, .th-tg-trophy .emo { z-index: 1; margin-bottom: 1rem; }
+.th-tg-trophy .gift-w.top .user { padding: .3rem .8rem .3rem .4rem; width: fit-content; margin: .2rem auto 0; border-radius: 9rem; background: var(--panel); }
+.th-tg-trophy .amt { background: var(--panel); }
+
+/* tg-cyber = إطار حاد: بطاقة بزوايا حادة وحد لوني رفيع */
+.th-tg-cyber .gift-w { border-radius: .2rem; border: .1rem solid color-mix(in srgb, var(--c) 70%, transparent); background: rgba(10, 11, 14, .9); }
+.th-tg-cyber .gift-w::before, .th-tg-cyber .gift-w::after { content: ""; position: absolute; width: 1.2rem; height: 1.2rem; border: .22rem solid var(--c); }
+.th-tg-cyber .gift-w::before { top: -.3rem; left: -.3rem; border-right: 0; border-bottom: 0; }
+.th-tg-cyber .gift-w::after { bottom: -.3rem; right: -.3rem; border-left: 0; border-top: 0; }
+.th-tg-cyber .glow { display: none; }
+.th-tg-cyber .gift-w .amt, .th-tg-cyber .gift-w.top .user .pic { border-radius: .2rem; }
+.th-tg-cyber .gift-w.top .user .pic .av { border-radius: .2rem; }
+
+/* tg-strip = شريط أفقي مضغوط لزاوية الشاشة (مشترك مع lg-ribbon) */
+.th-tg-strip .gift-w, .th-lg-ribbon .gift-w { display: grid; grid-template-columns: 5rem 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 1rem; width: 30rem; padding: .7rem 1.2rem .7rem .7rem; text-align: start; direction: ltr; }
+.th-tg-strip .stage, .th-lg-ribbon .stage { grid-column: 1; grid-row: 1 / span 2; height: 5rem; border-radius: .7rem; background: color-mix(in srgb, var(--c) 16%, transparent); }
+.th-tg-strip .glow, .th-lg-ribbon .glow, .th-lg-ribbon .rays { display: none; }
+.th-tg-strip .img, .th-lg-ribbon .img { height: 4rem; animation: none; }
+.th-tg-strip .emo, .th-lg-ribbon .emo { font-size: 3.2rem; animation: none; }
+.th-tg-strip .gift-w .title, .th-lg-ribbon .gift-w .title { grid-column: 2; font-size: .8rem; align-self: end; }
+.th-tg-strip .gift-w.top .user { grid-column: 2; justify-content: flex-start; margin: 0; align-self: start; }
+.th-tg-strip .gift-w.top .user .pic { width: 1.8rem; height: 1.8rem; }
+.th-tg-strip .gift-w.top .user .name, .th-lg-ribbon .who { font-size: 1.35rem; }
+.th-lg-ribbon .who { grid-column: 2; align-self: start; text-align: left; }
+.th-tg-strip .amt, .th-lg-ribbon .amt { grid-column: 3; grid-row: 1 / span 2; margin: 0; }
+
+/* ================= آخر هدية ================= */
+.stage > .deco { place-self: stretch; }
+.deco i { position: absolute; display: block; }
+
+/* lg-unbox = فتح الصندوق: الغطاء يطير وتخرج الهدية */
+.th-lg-unbox .stage { height: 11rem; }
+.th-lg-unbox .glow { bottom: .2rem; }
+.th-lg-unbox .img, .th-lg-unbox .emo { animation: giftRise .9s .35s var(--ease) both, float 3s 1.4s ease-in-out infinite; z-index: 1; margin-bottom: 3rem; height: 7rem; font-size: 5.5rem; }
+@keyframes giftRise { from { transform: translateY(4rem) scale(.4); opacity: 0; } }
+.th-lg-unbox .deco { display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.th-lg-unbox .deco i:nth-child(1) { left: 34%; right: 34%; bottom: 0; height: 3.2rem; border-radius: 0 0 .4rem .4rem; background: linear-gradient(90deg, transparent 44%, rgba(255, 255, 255, .85) 44% 56%, transparent 56%), var(--c); }
+.th-lg-unbox .deco i:nth-child(2) { left: 32%; right: 32%; bottom: 3rem; height: 1rem; border-radius: .25rem; background: linear-gradient(90deg, transparent 45%, rgba(255, 255, 255, .85) 45% 55%, transparent 55%), color-mix(in srgb, var(--c) 75%, #fff); animation: lidOff .9s .15s cubic-bezier(.3, .7, .4, 1) both; }
+@keyframes lidOff { 100% { transform: translate(6rem, -5rem) rotate(35deg); opacity: 0; } }
+.th-lg-unbox .deco i:nth-child(n+3) { display: none; }
+
+/* lg-ribbon = شريط أفقي (مشترك مع tg-strip أعلاه) */
+
+/* lg-bubble = تألق: نقاط ضوء صغيرة تصعد خلف الهدية */
+.th-lg-bubble .deco { display: block; position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.th-lg-bubble .deco i { bottom: -.5rem; left: calc(8% + var(--x) * 84%); width: calc(.2rem + var(--z) * .3rem); height: calc(.2rem + var(--z) * .3rem); border-radius: 50%; background: color-mix(in srgb, var(--c) 50%, #fff); opacity: 0; animation: sparkUp calc(2.4s + var(--z) * 2s) ease-out infinite; animation-delay: calc(var(--d) * -4s); }
+@keyframes sparkUp { 0% { translate: 0 0; opacity: 0; } 20% { opacity: .9; } 100% { translate: 0 -9rem; opacity: 0; } }
+
+/* lg-flame = شارة دافئة: عنوان على كبسولة ودرجات دافئة */
+.th-lg-flame .gift-w { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 22%, var(--panel-solid)), var(--panel) 55%); }
+.th-lg-flame .gift-w .title { display: inline-block; padding: .25rem 1rem; border-radius: 9rem; background: var(--c); color: #fff; letter-spacing: .16em; }
+.th-lg-flame .deco { display: block; position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.th-lg-flame .deco i { bottom: .5rem; left: calc(14% + var(--x) * 72%); width: calc(.18rem + var(--z) * .18rem); height: calc(.18rem + var(--z) * .18rem); border-radius: 50%; background: #ffc56b; opacity: 0; animation: emberUp calc(1.4s + var(--z) * 1.3s) ease-out infinite; animation-delay: calc(var(--d) * -2.5s); }
+@keyframes emberUp { from { translate: 0 0; opacity: 1; } to { translate: .8rem -9rem; opacity: 0; } }
+
+/* ================= معرض الهدايا ================= */
+/* gg-shelf = رف: الهدايا بدون بطاقات على خط لوني */
+.th-gg-shelf .gallery .grid { gap: .4rem 1rem; padding-bottom: .8rem; border-bottom: .22rem solid var(--c); }
+.th-gg-shelf .gallery .g { background: none; border: 0; padding: .3rem .2rem; width: 6.6rem; }
+.th-gg-shelf .gallery .g .name { text-shadow: 0 .06rem .2rem #000; color: #fff; }
+.th-gg-shelf .gallery .c { color: #fff; text-shadow: 0 .06rem .2rem #000; }
+
+/* gg-hex = فاتح (مشترك أعلاه) */
+.th-gg-hex .gallery .g .name { color: #2b2e37; }
+
+/* gg-marquee = شريط متحرك */
+.th-gg-marquee .gallery { width: 100vw; overflow: hidden; }
+.th-gg-marquee .gallery .grid { flex-wrap: nowrap; justify-content: flex-start; width: max-content; animation: marq var(--dur, 20s) linear infinite; }
+@keyframes marq { to { transform: translateX(-50%); } }
+.th-gg-marquee .gallery .g { flex-shrink: 0; animation: none; }
+
+/* gg-polaroid = مدمج: كبسولات صغيرة (صورة + عدد) */
+.th-gg-polaroid .gallery .grid { gap: .5rem; }
+.th-gg-polaroid .gallery .g { display: flex; align-items: center; gap: .5rem; width: auto; padding: .3rem .9rem .3rem .3rem; border-radius: 9rem; direction: ltr; }
+.th-gg-polaroid .gallery .g img { width: 2.4rem; height: 2.4rem; }
+.th-gg-polaroid .gallery .g .emo { font-size: 1.8rem; line-height: 2.4rem; width: 2.4rem; }
+.th-gg-polaroid .gallery .g .name { margin: 0; }
+
+/* ================= شريط الإجراءات ================= */
+/* as-lower = شريط سفلي بزوايا حادة */
+.th-as-lower .slider { overflow: visible; }
+.th-as-lower .slide { border-radius: .2rem; padding: 0 1.4rem 0 0; gap: 0; border: 0; background: var(--panel-solid); overflow: hidden; animation: lowerIn .5s var(--ease) both; }
+.th-as-lower .slide .i { width: 4.4rem; height: 4.4rem; border-radius: 0; margin-inline-end: 1rem; }
+.th-as-lower .slide.out { animation: lowerOut .35s ease-in both; }
+@keyframes lowerIn { from { opacity: 0; transform: translateX(2rem); } }
+@keyframes lowerOut { to { opacity: 0; transform: translateX(-2rem); } }
+
+/* as-ticker = شريط أخبار متحرك */
+/* الحاوية ltr حتى يبدأ الشريط من الحافة ويتحرك بلا فراغ، والوسم يبقى يميناً بـ order */
+.th-as-ticker .slider { position: relative; width: 100vw; display: flex; align-items: center; overflow: hidden; padding: 0; background: var(--panel); border-block: .06rem solid var(--line); direction: ltr; }
+.tick-tag { position: absolute; right: 0; top: 0; bottom: 0; z-index: 2; box-shadow: -.6rem 0 1rem rgba(0, 0, 0, .35); flex-shrink: 0; align-self: stretch; display: flex; align-items: center; padding: 0 1.2rem; background: var(--c); font-family: "Tajawal", var(--ff); font-weight: 800; font-size: 1.1rem; }
+.tick-track { display: flex; flex-shrink: 0; width: max-content; direction: ltr; animation: marq var(--dur, 20s) linear infinite; }
+.tick-item { display: flex; align-items: center; gap: .55rem; padding: .7rem 1.6rem; white-space: nowrap; font-family: "Tajawal", var(--ff); font-size: 1.15rem; direction: rtl; }
+.tick-item + .tick-item { border-inline-start: .06rem solid var(--line); }
+.tick-item b { color: var(--ct); }
+.tick-item svg { width: 1.2rem; height: 1.2rem; fill: none; stroke: var(--ct); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tick-item img { width: 1.8rem; height: 1.8rem; object-fit: contain; }
+
+/* as-list = قائمة: الكل ظاهر والنشط يبرز بالدور */
+.th-as-list .slider { width: 28rem; display: flex; flex-direction: column; gap: .4rem; overflow: visible; }
+.th-as-list .slide { animation: none; padding: .5rem .9rem .5rem .5rem; opacity: .55; box-shadow: none; transition: opacity .4s, transform .4s, border-color .4s; }
+.th-as-list .slide .i { width: 2.4rem; height: 2.4rem; background: rgba(255, 255, 255, .08); color: var(--ct); }
+.th-as-list .slide .i svg { width: 1.3rem; height: 1.3rem; }
+.th-as-list .slide .ac { font-size: 1.15rem; }
+.th-as-list .slide.on { opacity: 1; transform: translateX(-.4rem); border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: var(--shadow); }
+.th-as-list .slide.on .i { background: var(--c); color: #fff; }
+
+/* as-pill = كبسولة صغيرة لزاوية الشاشة */
+.th-as-pill .slider { width: auto; }
+.th-as-pill .slide { padding: .35rem 1.3rem .35rem .35rem; border-radius: 9rem; animation: pillIn .45s var(--ease) both; }
+@keyframes pillIn { from { opacity: 0; scale: .85; } }
+.th-as-pill .slide.out { animation: pillOut .3s ease-in both; }
+@keyframes pillOut { to { opacity: 0; scale: .9; } }
+.th-as-pill .slide .i { width: 2.4rem; height: 2.4rem; border-radius: 50%; }
+.th-as-pill .slide .i svg { width: 1.3rem; height: 1.3rem; }
+.th-as-pill .slide > div:last-child { display: flex; align-items: baseline; gap: .6rem; }
+.th-as-pill .slide .tr { font-size: .9rem; }
+.th-as-pill .slide .ac { font-size: 1.1rem; }
+
+/* ================= عدد المشاهدين ================= */
+/* vw-live = شارة مباشر */
+.th-vw-live .viewers { min-width: 0; gap: .7rem; padding: .3rem 1.1rem .3rem .3rem; border-radius: 9rem; }
+.th-vw-live .ico, .th-vw-live small { display: none; }
+.th-vw-live .live-tag { display: flex; align-items: center; gap: .4rem; padding: .3rem .8rem; border-radius: 9rem; background: #ff3b5c; font-weight: 800; font-size: 1.05rem; letter-spacing: .08em; }
+.th-vw-live .live-tag i { width: .5rem; height: .5rem; border-radius: 50%; background: #fff; animation: blink 1.2s infinite; }
+.th-vw-live .viewers b { margin: 0; font-size: 1.5rem; }
+
+/* vw-pulse = نبض: خط نبض يتحرك بجانب الرقم */
+.th-vw-pulse .viewers { background: none; border: 0; box-shadow: none; padding: 0; gap: 1rem; }
+.th-vw-pulse .ico { width: 3.4rem; height: 3.4rem; border-radius: 50%; background: var(--panel); }
+.th-vw-pulse small { color: #fff; text-shadow: 0 .06rem .25rem #000; }
+.th-vw-pulse .viewers b { font-size: 2.9rem; text-shadow: 0 .1rem .5rem rgba(0, 0, 0, .7); }
+.th-vw-pulse .ecg { display: block; width: 10rem; height: 3.6rem; fill: none; stroke: var(--c); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 90 210; animation: ecg 1.8s linear infinite; }
+@keyframes ecg { from { stroke-dashoffset: 300; } to { stroke-dashoffset: 0; } }
+
+/* vw-led = فاتح (مشترك أعلاه) */
+.th-vw-led .viewers small i { background: #e11d48; }
+
+/* vw-minimal = بسيط */
+.th-vw-minimal .viewers { min-width: 0; background: none; border: 0; box-shadow: none; padding: 0; gap: .6rem; }
+.th-vw-minimal .ico { background: none; width: 2.6rem; height: 2.6rem; color: #fff; }
+.th-vw-minimal .ico svg { width: 2.2rem; height: 2.2rem; filter: drop-shadow(0 .06rem .2rem #000); }
+.th-vw-minimal small { display: none; }
+.th-vw-minimal .viewers b { margin: 0; font-size: 2.4rem; text-shadow: 0 .08rem .35rem #000; }
+
+/* ================= كتابة فوق اللوحات (الألعاب النارية والنافورة) ================= */
+.fx-caption { position: fixed; left: 0; right: 0; bottom: 1.2rem; width: fit-content; max-width: 90vw; margin: 0 auto; padding: .35rem 1.2rem; border-radius: 9rem; background: var(--panel); text-align: center; font-size: 1.6rem; font-weight: 700; pointer-events: none; white-space: nowrap; }
+.fx-caption.pop { animation: pop .5s both; }
+.jar-total { color: #ffd36b; }

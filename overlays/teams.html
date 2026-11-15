@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>LiveDeck Teams</title>
+  <link rel="stylesheet" href="ld-broadcast.css" />
+  <style>
+    .wrap { display: flex; gap: 10px; margin: 12px; }
+    .team {
+      position: relative; flex: 1; min-width: 130px; padding: 14px 16px 12px; overflow: hidden;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
+      text-align: center; transition: transform .3s var(--ease);
+    }
+    .team::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--c); }
+    .team::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: var(--share, 0%); background: color-mix(in srgb, var(--c) 70%, transparent); transition: width .6s var(--ease); }
+    .team.lead { transform: translateY(-3px); border-color: color-mix(in srgb, var(--c) 45%, var(--line)); }
+    .name { font-family: var(--font-ar); font-weight: 800; font-size: 16px; color: color-mix(in srgb, var(--c) 55%, #fff); }
+    .score { font-size: 40px; font-weight: 800; line-height: 1.15; letter-spacing: -.5px; }
+    .score.bump { animation: ld-bump .35s var(--ease); }
+    .members { font-family: var(--font-ar); font-size: 12.5px; color: var(--dim); }
+    .hint { width: fit-content; margin: 0 auto; padding: 5px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-family: var(--font-ar); font-size: 14px; font-weight: 700; }
+    .hint:empty { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="wrap"></div>
+  <div class="hint" id="hint"></div>
+  <script src="overlay.js"></script>
+  <script>
+    (function () {
+      const { el, fmt, params } = Overlay;
+      const prev = [];
+      function draw(st) {
+        if (!st || !st.teams) return;
+        const max = Math.max(...st.teams.map((t) => t.score));
+        const sum = st.teams.reduce((a, t) => a + Math.max(0, t.score), 0);
+        document.getElementById('wrap').replaceChildren(...st.teams.map((t, i) => {
+          const score = el('div', { className: 'score num', textContent: fmt(t.score) });
+          if (prev[i] !== undefined && prev[i] !== t.score) score.classList.add('bump');
+          prev[i] = t.score;
+          const box = el('div', { className: 'team' + (t.score === max && max > 0 ? ' lead' : '') },
+            el('div', { className: 'name', textContent: t.name }), score,
+            el('div', { className: 'members', textContent: `${t.members} عضو` }));
+          box.style.setProperty('--c', t.color || '#fff');
+          box.style.setProperty('--share', sum ? (Math.max(0, t.score) / sum) * 100 + '%' : '0%');
+          return box;
+        }));
+      }
+      const cmd = params.get('cmd');
+      if (cmd) document.getElementById('hint').textContent = `اكتب ${cmd} 1 أو ${cmd} 2 للانضمام`;
+      Overlay.on('snapshot', (s) => draw(s.teams)).on('teams', draw);
+    })();
+  </script>
+</body>
+</html>

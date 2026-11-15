@@ -1,0 +1,121 @@
+/* تركيبات الأوفرلاي — LiveDeck Broadcast. كل المقاسات بوحدة rem حتى تتناسب مع حجم Browser Source
+   التصميم الأساسي لكل تركيبة هنا، والثيمات الأخرى في widget-themes.css (الصنف th-<id> على <html>) */
+html { font-size: calc(min(2.5vw, 4.4vh) * var(--s, 1)); }
+html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; color: #fff; font-family: var(--ff, "Outfit", "Tajawal", "Segoe UI", sans-serif); -webkit-font-smoothing: antialiased; }
+.deco, .bigheart, .ecg, .next, .live-tag, .crown, .flag { display: none; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+:root {
+  --c: #ff3366;
+  --ct: color-mix(in srgb, var(--c) 55%, #fff);       /* لون نصي مقروء من اللون المميز */
+  --panel: rgba(14, 15, 19, .92);
+  --panel-solid: #0e0f13;
+  --line: rgba(255, 255, 255, .09);
+  --dim: rgba(235, 238, 245, .62);
+  --shadow: 0 .6rem 1.6rem rgba(0, 0, 0, .38), 0 .1rem .3rem rgba(0, 0, 0, .25);
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --gold: #ffc23d; --silver: #cfd5df; --bronze: #d98c56;
+}
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; }
+#root { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+.name { unicode-bidi: plaintext; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.num { font-variant-numeric: tabular-nums; }
+.coin { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -.2em; }
+.av { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; background: #23252d; }
+@keyframes pop { from { transform: translateY(.8rem) scale(.96); opacity: 0; } }
+.pop { animation: pop .55s var(--ease) both; }
+@keyframes rise { from { transform: translateY(1rem); opacity: 0; } }
+@keyframes slideX { from { transform: translateX(-1.6rem); opacity: 0; } }
+@keyframes growX { from { transform: scaleX(0); } }
+@keyframes bump { 40% { transform: scale(1.12); } }
+@keyframes blink { 50% { opacity: .3; } }
+@keyframes float { 50% { transform: translateY(-.25rem); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- آخر إعجاب / المتابعة: لوحة داكنة ---------- */
+.last {
+  position: relative; display: flex; align-items: center; gap: 1rem; min-width: 18rem; max-width: 30rem;
+  padding: .7rem 1.6rem .7rem .7rem; border-radius: 1rem; direction: ltr;
+  background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow);
+}
+.last .pic { position: relative; width: 3.8rem; height: 3.8rem; flex-shrink: 0; border-radius: 50%; box-shadow: 0 0 0 .18rem var(--panel-solid), 0 0 0 .32rem var(--c); margin: .3rem; }
+.last .badge { position: absolute; right: -.35rem; bottom: -.35rem; width: 1.5rem; height: 1.5rem; display: grid; place-items: center; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 .16rem var(--panel-solid); }
+.last .badge svg { width: .85rem; height: .85rem; fill: #fff; }
+.last .txt { min-width: 0; }
+.last small { display: block; font-family: "Tajawal", var(--ff); font-size: .85rem; font-weight: 700; color: var(--ct); }
+.last b { display: block; font-size: 1.65rem; font-weight: 700; line-height: 1.2; }
+.last .cnt { margin-inline-start: auto; padding: .2rem .7rem; border-radius: 9rem; background: color-mix(in srgb, var(--c) 18%, transparent); font-size: 1.1rem; font-weight: 700; color: var(--ct); white-space: nowrap; }
+
+/* ---------- إجمالي المتابعين: بطاقة ---------- */
+.total { position: relative; width: 16rem; padding: 1.3rem 1.2rem 1.2rem; text-align: center; border-radius: 1.2rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow); overflow: hidden; }
+.total .pic { width: 5.4rem; height: 5.4rem; margin: .2rem auto .8rem; border-radius: 50%; box-shadow: 0 0 0 .2rem var(--panel-solid), 0 0 0 .36rem var(--c); }
+.total .n { font-size: 2.9rem; font-weight: 700; line-height: 1.05; direction: ltr; letter-spacing: -.02em; }
+.total .n.bump { animation: bump .5s var(--ease); }
+.total .t { font-family: "Tajawal", var(--ff); font-size: 1.05rem; font-weight: 700; margin-top: .3rem; color: var(--dim); }
+.next { font-family: "Tajawal", var(--ff); font-size: .9rem; color: var(--dim); margin-top: .4rem; direction: rtl; }
+.next b { color: var(--ct); }
+
+/* ---------- عدد المشاهدين: بطاقة ---------- */
+.viewers { display: flex; align-items: center; gap: 1.1rem; direction: ltr; min-width: 17rem; padding: .9rem 1.8rem .9rem .9rem; border-radius: 1.1rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow); }
+.viewers .ico { width: 3.8rem; height: 3.8rem; display: grid; place-items: center; border-radius: .9rem; background: color-mix(in srgb, var(--c) 18%, transparent); color: var(--ct); }
+.viewers .ico svg { width: 2.1rem; height: 2.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.viewers small { display: flex; align-items: center; gap: .5rem; font-size: .85rem; font-weight: 700; letter-spacing: .18em; color: var(--dim); }
+.viewers small i { width: .55rem; height: .55rem; border-radius: 50%; background: #ff3b5c; animation: blink 1.4s infinite; }
+.viewers b { display: block; margin-top: .1rem; font-size: 2.5rem; line-height: 1.05; font-weight: 700; letter-spacing: -.02em; }
+
+/* ---------- أفضل 3: دوائر ---------- */
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: 1.2rem; direction: ltr; padding-top: 1rem; }
+.rank { position: relative; width: 9rem; text-align: center; --ring: var(--silver); animation: rise .6s var(--ease) both; animation-delay: calc(var(--k) * .12s); }
+.rank.r1 { width: 11.5rem; --ring: var(--gold); order: 2; }
+.rank.r2 { order: 3; --ring: var(--silver); }
+.rank.r3 { order: 1; --ring: var(--bronze); }
+.rank .pic { position: relative; aspect-ratio: 1; border-radius: 50%; padding: .32rem; background: var(--ring); box-shadow: 0 .5rem 1.2rem rgba(0, 0, 0, .45); }
+.rank .inner { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; border: .22rem solid var(--panel-solid); }
+.rank .num-b { position: absolute; left: 50%; bottom: -.7rem; transform: translateX(-50%); width: 1.9rem; height: 1.9rem; display: grid; place-items: center; border-radius: 50%; background: var(--ring); color: #16171c; font-weight: 800; font-size: 1rem; box-shadow: 0 0 0 .18rem var(--panel-solid); }
+.rank.r1 .num-b { width: 2.3rem; height: 2.3rem; font-size: 1.2rem; }
+.rank .val { margin: 1.1rem auto 0; padding: .4rem .6rem; border-radius: .7rem; background: var(--panel); border: .06rem solid var(--line); }
+.rank .val .name { font-size: .9rem; font-weight: 600; color: #e9ebf0; }
+.rank .val b { display: block; font-size: 1.2rem; color: var(--ring); }
+.rank .val b.bump { animation: bump .45s var(--ease); }
+
+/* ---------- أعلى هدية / آخر هدية: بطاقة ---------- */
+.gift-w { position: relative; width: 22rem; padding: 1.1rem 1.2rem 1.2rem; text-align: center; border-radius: 1.2rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow); }
+.gift-w .title { font-size: .95rem; font-weight: 700; letter-spacing: .22em; color: var(--ct); text-transform: uppercase; }
+.gift-w .stage { position: relative; height: 9.5rem; display: grid; place-items: center; }
+.gift-w .rays { display: none; }
+.gift-w .glow { position: absolute; left: 50%; bottom: 1rem; width: 9rem; height: 2rem; margin-left: -4.5rem; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 40%, transparent), transparent); }
+.gift-w .img { position: relative; height: 8rem; max-width: 15rem; object-fit: contain; filter: drop-shadow(0 .4rem .6rem rgba(0, 0, 0, .5)); animation: float 3.2s ease-in-out infinite; }
+.gift-w .emo { position: relative; font-size: 6.5rem; line-height: 1; animation: float 3.2s ease-in-out infinite; }
+.gift-w .who { font-size: 1.7rem; font-weight: 700; }
+.gift-w .amt { display: inline-flex; align-items: center; gap: .35rem; margin-top: .35rem; padding: .2rem .8rem; border-radius: 9rem; background: rgba(255, 255, 255, .08); font-size: 1.2rem; font-weight: 700; direction: ltr; }
+.gift-w.top .user { display: flex; align-items: center; justify-content: center; gap: .55rem; margin-top: .2rem; }
+.gift-w.top .user .pic { width: 2.4rem; height: 2.4rem; border-radius: 50%; box-shadow: 0 0 0 .14rem var(--c); flex-shrink: 0; }
+.gift-w.top .user .name { font-size: 1.15rem; font-weight: 700; max-width: 14rem; }
+.gift-w.top .stage { height: 8.5rem; }
+
+/* ---------- معرض الهدايا: بطاقات داكنة ---------- */
+.gallery { width: 34rem; text-align: center; }
+.gallery .hd { display: inline-flex; align-items: center; gap: .7rem; padding: .35rem .5rem .35rem 1rem; border-radius: 9rem; background: var(--panel); font-size: 1rem; font-weight: 700; letter-spacing: .2em; color: var(--ct); direction: ltr; }
+.gallery .hd b { min-width: 1.8rem; padding: .1rem .5rem; border-radius: 9rem; background: var(--c); color: #fff; letter-spacing: 0; font-size: .95rem; }
+.gallery .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; margin-top: .9rem; }
+.gallery .g { width: 7.4rem; padding: .7rem .4rem .6rem; border-radius: .9rem; background: var(--panel); border: .06rem solid var(--line); animation: pop .5s var(--ease) both; animation-delay: calc(var(--i) * 60ms); }
+.gallery .g img { height: 3.6rem; width: 100%; object-fit: contain; }
+.gallery .g .emo { font-size: 2.8rem; line-height: 3.6rem; }
+.gallery .g .name { font-size: .85rem; font-weight: 600; margin-top: .25rem; color: #e3e6ec; }
+.gallery .g .c { font-size: .95rem; font-weight: 700; color: var(--ct); }
+.gallery .none { margin-top: 1.2rem; font-family: "Tajawal", var(--ff); font-size: 1rem; color: rgba(255, 255, 255, .7); text-shadow: 0 .06rem .2rem #000; }
+
+/* ---------- شريط الإجراءات: بطاقة ---------- */
+.slider { width: 30rem; overflow: hidden; padding: .3rem; }
+.slide { display: flex; align-items: center; gap: 1rem; padding: .8rem 1.3rem .8rem .8rem; border-radius: 1rem; background: var(--panel); border: .06rem solid var(--line); box-shadow: var(--shadow); direction: rtl; animation: slideIn .55s var(--ease) both; }
+.slide.out { animation: slideOut .38s ease-in both; }
+@keyframes slideIn { from { transform: translateY(70%); opacity: 0; } }
+@keyframes slideOut { to { transform: translateY(-70%); opacity: 0; } }
+.slide .i { width: 3.4rem; height: 3.4rem; flex-shrink: 0; display: grid; place-items: center; border-radius: .8rem; background: var(--c); color: #fff; font-size: 1.9rem; }
+.slide .i svg { width: 1.7rem; height: 1.7rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.slide .i img { width: 100%; height: 100%; object-fit: contain; }
+.slide .tr { font-family: "Tajawal", var(--ff); font-size: 1rem; font-weight: 700; color: var(--ct); }
+.slide .ac { font-family: "Tajawal", var(--ff); font-size: 1.5rem; font-weight: 800; line-height: 1.25; }
+
+/* ---------- جرة العملات ---------- */
+.jar-total { position: fixed; left: 0; right: 0; bottom: 1.2rem; text-align: center; font-size: 2rem; font-weight: 700; color: #ffd36b; text-shadow: 0 .1rem .3rem #000; direction: ltr; }

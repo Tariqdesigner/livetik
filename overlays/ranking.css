@@ -1,0 +1,161 @@
+/* «التصنيف» — مشترك بين الأوفرلاي ومعاينة التطبيق. كل الأصناف تبدأ بـ rk- (النص والعنوان من latest-widget.css) */
+.rk { --c: #a78bfa; --rc: var(--bx-bd); --crown: var(--bx-bd); position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 26px 30px; color: #fff; direction: rtl; font-family: 'Tajawal', 'Cairo', sans-serif; width: max-content; }
+.rk-title { font-size: 24px; letter-spacing: 5px; margin-bottom: 2px; }
+.rk-wait { padding: 30px 40px; font-size: 20px; color: rgba(255, 255, 255, .55); }
+
+/* الاسم والرقم */
+.rk .lt-name.rk-name { font-size: calc(19px * var(--ns)); line-height: 1.3; font-weight: 800; max-width: none; padding: 0 .06em; }
+.rk-val { display: inline-flex; align-items: center; gap: 5px; font: 700 calc(15px * var(--vs)) 'Outfit', 'Tajawal', sans-serif; color: #fff; direction: ltr; font-variant-numeric: tabular-nums; white-space: nowrap; flex-shrink: 0; }
+.rk-ic { display: inline-grid; width: 1em; height: 1em; }
+.rk-ic svg { width: 100%; height: 100%; }
+
+/* تبويبات «اللايكات والهدايا والمشاركة» */
+.rk-tabs { display: flex; gap: 8px; margin-top: -4px; }
+.rk-tab { padding: 5px 16px; border-radius: 99px; font-size: 16px; font-weight: 800; color: rgba(255, 255, 255, .6); background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); }
+.rk-tab.on { color: #fff; background: color-mix(in srgb, var(--c) 30%, rgba(8, 6, 14, .8)); border-color: var(--c); box-shadow: 0 0 12px color-mix(in srgb, var(--c) 60%, transparent); }
+
+/* ---------- المربع (بطاقة المنصة، شريط القائمة، الشريط الأفقي) ---------- */
+.rk-box { position: relative; background: var(--bx-bg); border: var(--bx-bw) solid var(--rc); border-radius: var(--bx-r); box-shadow: 0 0 var(--bx-glow) color-mix(in srgb, var(--rc) 70%, transparent), inset 0 0 calc(var(--bx-glow) * .45) color-mix(in srgb, var(--rc) 22%, transparent); }
+.rk-nobox .rk-box { background: none !important; border-color: transparent !important; box-shadow: none !important; }
+.rk-nobox .rk-box::before, .rk-nobox .rk-row::after { display: none !important; }
+/* إضاءة تلف على الحواف */
+@property --rk-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.rk-edgelit .rk-box::after { content: ""; position: absolute; inset: calc(-1 * var(--bx-bw)); padding: max(2px, var(--bx-bw)); border-radius: inherit; pointer-events: none;
+  background: conic-gradient(from var(--rk-ang), transparent 0 60%, var(--rc) 76%, #fff 86%, transparent 95%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: rkAng 2.8s linear infinite; }
+@keyframes rkAng { to { --rk-ang: 360deg; } }
+
+/* ---------- الصورة ---------- */
+.rk-av { --s: 60px; position: relative; width: var(--s); height: var(--s); flex-shrink: 0; }
+.rk-av .pic { position: relative; width: 100%; height: 100%; }
+.rk-av .av { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.rk-av:not(.has-frame) .av { box-shadow: 0 0 0 3px rgba(8, 6, 14, .9), 0 0 0 calc(3px + max(2px, var(--bx-bw))) var(--rc), 0 0 calc(var(--bx-glow) + 6px) color-mix(in srgb, var(--rc) 65%, transparent); }
+.rk-badge { position: absolute; z-index: 3; bottom: -3px; inset-inline-end: -3px; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 99px; display: grid; place-items: center; font: 800 12px 'Outfit', sans-serif; color: #fff; background: var(--rc); box-shadow: 0 0 0 2.5px rgba(8, 6, 14, .95); }
+.rk-cf-ring .pic::after, .rk-cf-spin .pic::after, .rk-cf-double .pic::after, .rk-cf-dash .pic::after { content: ""; position: absolute; inset: -8px; border-radius: 50%; pointer-events: none; }
+.rk-cf-ring .pic::after { border: 3px solid var(--rc); }
+.rk-cf-spin .pic::after { border: 3px solid transparent; border-top-color: var(--rc); border-right-color: #fff; animation: rkSpin 1.6s linear infinite; }
+.rk-cf-double .pic::after { border: 3px solid var(--rc); box-shadow: 0 0 0 4px rgba(0, 0, 0, .6), 0 0 0 7px var(--rc); }
+.rk-cf-dash .pic::after { border: 3px dashed var(--rc); animation: rkSpin 8s linear infinite; }
+@keyframes rkSpin { to { transform: rotate(360deg); } }
+.rk-crown { display: block; width: 26px; height: 18px; color: var(--crown); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--crown) 70%, transparent)); margin-bottom: -4px; }
+.rk-crown svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- المنصة ---------- */
+.rk-podium { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: var(--gap); }
+.rk-pcol { display: flex; flex-direction: column; align-items: center; width: calc(124px * var(--bx-s)); }
+.rk-p1 { width: calc(150px * var(--bx-s)); } .rk-p4, .rk-p5 { width: calc(108px * var(--bx-s)); }
+.rk-pcol.rk-empty { visibility: hidden; }
+.rk-pcard { display: grid; justify-items: center; gap: 2px; width: 100%; margin-top: calc(8px + var(--avg)); padding: calc(7px * var(--bx-s)) 8px calc(8px * var(--bx-s)); box-sizing: border-box; }
+.rk-p1 .rk-pcard { padding-block: calc(11px * var(--bx-s)) calc(12px * var(--bx-s)); }
+.rk-p1 .lt-name.rk-name { font-size: calc(23px * var(--ns)); }
+.rk-p1 .rk-val { font-size: calc(18px * var(--vs)); }
+.rk-p4 .lt-name.rk-name, .rk-p5 .lt-name.rk-name { font-size: calc(16px * var(--ns)); }
+.rk-p4 .rk-val, .rk-p5 .rk-val { font-size: calc(13px * var(--vs)); }
+
+/* ---------- القائمة ---------- */
+.rk-list { display: grid; gap: calc(var(--gap) * .55); width: calc(470px * var(--bx-s)); }
+.rk-list.rk-two { grid-template-columns: repeat(2, minmax(0, 1fr)); width: calc(860px * var(--bx-s)); gap: calc(var(--gap) * .45) 16px; }
+.rk-row { --w: 1; position: relative; display: flex; align-items: center; gap: calc(10px + var(--avg)); }
+.rk-num { width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; font: 800 14px 'Outfit', sans-serif; color: #fff; background: var(--rc); }
+.rk-bar { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: calc(44px * var(--bx-s)); padding: 0 16px; box-sizing: border-box; }
+.rk-bar > * { position: relative; }
+/* شريط التقدّم حسب القيمة */
+.rk-bar::before { content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: calc(var(--w) * 100%); border-radius: inherit; background: linear-gradient(270deg, color-mix(in srgb, var(--rc) 8%, transparent), color-mix(in srgb, var(--rc) 34%, transparent)); pointer-events: none; }
+.rk-two .rk-bar { height: calc(36px * var(--bx-s)); }
+.rk-two .lt-name.rk-name { font-size: calc(15px * var(--ns)); }
+.rk-two .rk-val { font-size: calc(13px * var(--vs)); }
+
+/* ---------- شريط أفقي ---------- */
+.rk-strip { display: flex; align-items: center; gap: calc(var(--gap) * .6); }
+.rk-chip { display: inline-flex; align-items: center; gap: 9px; height: calc(46px * var(--bx-s)); padding: 0 16px 0 8px; box-sizing: border-box; }
+.rk-chip .rk-num { width: 26px; height: 26px; font-size: 13px; }
+.rk-chip .rk-badge { display: none; }
+
+/* ---------- فقاعات ---------- */
+.rk-bubbles { display: flex; align-items: flex-end; gap: var(--gap); }
+.rk-bub { display: flex; flex-direction: column; align-items: center; gap: calc(6px + var(--avg)); --crown: #ffcb3d; }
+.rk-bub.rk-r1 { --rc: #ffcb3d; } .rk-bub.rk-r2 { --rc: #d8deea; } .rk-bub.rk-r3 { --rc: #e08a4f; }
+.rk-bub .lt-name.rk-name { font-size: calc(17px * var(--ns)); }
+.rk-bub .rk-val { font-size: calc(14px * var(--vs)); }
+
+/* ======================= التصاميم ======================= */
+/* منصة الحبر الأحمر: بقع حبر خلف المنصة */
+.rk-d-redink .rk-podium::before { content: ""; position: absolute; z-index: -1; inset: 10% -6% -14%; filter: blur(14px); opacity: .55;
+  background: radial-gradient(32% 42% at 50% 60%, #b1001a, transparent 70%), radial-gradient(18% 26% at 18% 72%, #8a0013, transparent 70%), radial-gradient(18% 26% at 82% 70%, #8a0013, transparent 70%); }
+.rk-d-redink .rk-pcard { clip-path: polygon(0 6%, 8% 0, 92% 2%, 100% 0, 98% 92%, 100% 100%, 6% 98%, 0 100%); }
+/* منصة غيوم الليل: غيوم تحت المنصة */
+.rk-d-nightclouds .rk-podium::after { content: ""; position: absolute; z-index: -1; inset: auto -8% -22px; height: 70px; filter: blur(6px); opacity: .7;
+  background: radial-gradient(16% 60% at 12% 60%, #cfe0ff, transparent 70%), radial-gradient(18% 70% at 34% 50%, #e6efff, transparent 70%), radial-gradient(20% 70% at 58% 55%, #d8e6ff, transparent 70%), radial-gradient(16% 60% at 84% 60%, #cfe0ff, transparent 70%); }
+.rk-d-nightclouds .rk-badge, .rk-d-nightclouds .rk-num { color: #0d1a3a; }
+/* منصة الجماجم: تاج جمجمة */
+.rk-d-skulls .rk-crown { width: 22px; height: 24px; }
+.rk-d-skulls .rk-crown svg { display: none; }
+.rk-d-skulls .rk-crown::before { content: ""; display: block; width: 100%; height: 100%; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 24'%3E%3Cpath d='M11 0C4.9 0 0 4.6 0 10.3c0 3.4 1.8 6.4 4.5 8.3V22a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3.4c2.7-1.9 4.5-4.9 4.5-8.3C22 4.6 17.1 0 11 0zM6.5 14.5a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2zm4.5 3.2-1.5-2.6h3zm4.5-3.2a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 24'%3E%3Cpath d='M11 0C4.9 0 0 4.6 0 10.3c0 3.4 1.8 6.4 4.5 8.3V22a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3.4c2.7-1.9 4.5-4.9 4.5-8.3C22 4.6 17.1 0 11 0zM6.5 14.5a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2zm4.5 3.2-1.5-2.6h3zm4.5-3.2a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z'/%3E%3C/svg%3E") center / contain no-repeat; }
+.rk-d-skulls .rk-badge, .rk-d-skulls .rk-num { color: #121212; }
+/* المنصة السعودية: أخضر وذهبي */
+.rk-d-saudi .rk-podium::before { content: ""; position: absolute; z-index: -1; inset: 30% 4% -10px; border-radius: 50%; filter: blur(22px); background: radial-gradient(closest-side, rgba(0, 140, 70, .55), transparent); }
+.rk-d-saudi .rk-badge, .rk-d-saudi .rk-num { color: #0b3d1f; }
+
+/* شرائط بلون لكل مركز */
+.rk-d-butterfly .rk-r1, .rk-d-royal .rk-r1 { --rc: #f5c542; }
+.rk-d-butterfly .rk-r2, .rk-d-royal .rk-r2 { --rc: #d9dde6; }
+.rk-d-butterfly .rk-r3, .rk-d-royal .rk-r3 { --rc: #e8414d; }
+.rk-d-bow .rk-r1 { --rc: #ff5fa2; } .rk-d-bow .rk-r2 { --rc: #ff8cbf; } .rk-d-bow .rk-r3 { --rc: #ffb0d3; }
+.rk-d-cyber .rk-r1 { --rc: #19e3ff; } .rk-d-cyber .rk-r2 { --rc: #ff2bd6; } .rk-d-cyber .rk-r3 { --rc: #7dff3a; }
+.rk-d-plasma .rk-r1 { --rc: #ff4fd8; } .rk-d-plasma .rk-r2 { --rc: #a855f7; } .rk-d-plasma .rk-r3 { --rc: #22d3ee; }
+
+/* شرائط الفراشة: شريط معدني وجناح فراشة على الطرف */
+.rk-d-butterfly .rk-bar { background: linear-gradient(180deg, color-mix(in srgb, var(--rc) 50%, #fff) 0%, var(--rc) 42%, color-mix(in srgb, var(--rc) 45%, #000) 100%); }
+.rk-d-butterfly .rk-bar::before { display: none; }
+.rk-d-butterfly .rk-row .rk-name > span, .rk-d-butterfly .rk-row .rk-val { text-shadow: 0 1px 2px rgba(0, 0, 0, .8), 0 0 6px rgba(0, 0, 0, .55); }
+.rk-d-butterfly .rk-row::after { content: ""; position: absolute; inset-inline-end: -22px; top: 50%; width: 40px; height: 40px; transform: translateY(-50%); background: linear-gradient(180deg, color-mix(in srgb, var(--rc) 40%, #fff), var(--rc)); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--rc) 70%, transparent));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 20C14 6 3 2 1 8c-2 6 5 11 13 12-7 2-11 8-8 12 4 5 11-1 14-12z'/%3E%3Cpath d='M20 20c-3-5-2-11 1-13' fill='none' stroke='%23000' stroke-width='1.4'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 20C14 6 3 2 1 8c-2 6 5 11 13 12-7 2-11 8-8 12 4 5 11-1 14-12z'/%3E%3Cpath d='M20 20c-3-5-2-11 1-13' fill='none' stroke='%23000' stroke-width='1.4'/%3E%3C/svg%3E") center / contain no-repeat; }
+.rk-d-butterfly .rk-list { padding-inline-end: 20px; }
+
+/* الشرائط الملكية: حافة مزدوجة وزخرفة على الأطراف */
+.rk-d-royal .rk-bar { background: linear-gradient(180deg, color-mix(in srgb, var(--rc) 22%, var(--bx-bg)), var(--bx-bg) 60%); box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .55), inset 0 0 0 3.5px color-mix(in srgb, var(--rc) 70%, transparent), 0 0 var(--bx-glow) color-mix(in srgb, var(--rc) 60%, transparent); }
+.rk-d-royal .rk-row::after { content: ""; position: absolute; inset-inline-end: -14px; top: 50%; width: 26px; height: 34px; transform: translateY(-50%); background: linear-gradient(180deg, color-mix(in srgb, var(--rc) 40%, #fff), var(--rc));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 34'%3E%3Cpath d='M13 0l4 8-4 4-4-4zM13 34l4-8-4-4-4 4zM2 17c4-5 9-5 11 0-2 5-7 5-11 0zm22 0c-4-5-9-5-11 0 2 5 7 5 11 0z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 34'%3E%3Cpath d='M13 0l4 8-4 4-4-4zM13 34l4-8-4-4-4 4zM2 17c4-5 9-5 11 0-2 5-7 5-11 0zm22 0c-4-5-9-5-11 0 2 5 7 5 11 0z'/%3E%3C/svg%3E") center / contain no-repeat; }
+.rk-d-royal .rk-list { padding-inline-end: 14px; }
+.rk-d-royal .rk-badge, .rk-d-royal .rk-num { color: #1a1206; }
+
+/* شرائط الفيونكة: وردي فاتح وفيونكة على الطرف */
+.rk-d-bow .rk-val { color: #8a1f52; }
+.rk-d-bow .rk-row::after { content: ""; position: absolute; inset-inline-end: -20px; top: 50%; width: 40px; height: 30px; transform: translateY(-50%); background: var(--rc); filter: drop-shadow(0 2px 3px rgba(120, 20, 70, .35));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 30'%3E%3Cpath d='M20 15C14 4 2 0 1 7s4 15 19 8zm0 0c6-11 18-15 19-8s-4 15-19 8zM16 15l-6 14 5-2 3 3 2-15zm8 0 6 14-5-2-3 3-2-15z'/%3E%3Ccircle cx='20' cy='15' r='3.4'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 30'%3E%3Cpath d='M20 15C14 4 2 0 1 7s4 15 19 8zm0 0c6-11 18-15 19-8s-4 15-19 8zM16 15l-6 14 5-2 3 3 2-15zm8 0 6 14-5-2-3 3-2-15z'/%3E%3Ccircle cx='20' cy='15' r='3.4'/%3E%3C/svg%3E") center / contain no-repeat; }
+.rk-d-bow .rk-list { padding-inline-end: 20px; }
+.rk-d-bow .rk-strip .rk-val, .rk-d-bow .rk-chip .rk-val { color: #8a1f52; }
+
+/* سايبر: زوايا مقصوصة وخط نيون جانبي */
+.rk-d-cyber .rk-bar, .rk-d-cyber .rk-pcard, .rk-d-cyber .rk-chip { border-radius: 0; border-width: 0; clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  background: linear-gradient(270deg, color-mix(in srgb, var(--rc) 30%, transparent), transparent 70%), var(--bx-bg); box-shadow: inset -4px 0 0 var(--rc), inset 0 -1px 0 color-mix(in srgb, var(--rc) 60%, transparent), inset 0 1px 0 color-mix(in srgb, var(--rc) 60%, transparent); }
+.rk-d-cyber .rk-row, .rk-d-cyber .rk-pcol, .rk-d-cyber .rk-chip { filter: drop-shadow(0 0 calc(var(--bx-glow) * .4) color-mix(in srgb, var(--rc) 80%, transparent)); }
+.rk-d-cyber .rk-bar::before { display: none; }
+.rk-d-cyber .rk-badge, .rk-d-cyber .rk-num { border-radius: 3px; color: #070b16; }
+.rk-d-cyber .rk-val { font-family: 'Chakra Petch', 'Outfit', sans-serif; }
+
+/* الذهب الأسود */
+.rk-d-blackgold .rk-box { background: linear-gradient(180deg, rgba(255, 215, 120, .08), transparent 50%), var(--bx-bg); }
+.rk-d-blackgold .rk-badge, .rk-d-blackgold .rk-num { color: #050505; background: linear-gradient(180deg, #fbe7a1, var(--rc) 55%, #8a6a12); }
+.rk-d-blackgold .rk-val { color: #f3d27a; }
+
+/* بلازما: شريط متوهج بلون المركز */
+.rk-d-plasma .rk-bar, .rk-d-plasma .rk-chip { background: linear-gradient(270deg, color-mix(in srgb, var(--rc) 55%, #000 45%), var(--bx-bg) 75%); }
+.rk-d-plasma .rk-bar::before { display: none; }
+
+/* ---------- حركة الدخول ---------- */
+.rk-in .rk-item { animation-duration: .75s; animation-timing-function: cubic-bezier(.2, 1.2, .3, 1); animation-fill-mode: both; animation-delay: calc(var(--i) * 90ms); }
+.rk-in .rk-title, .rk-in .rk-tabs { animation: ltFade .6s ease both; }
+.rk-a-bounce .rk-item { animation-name: ltBounce; }
+.rk-a-slide .rk-item { animation-name: ltSlide; }
+.rk-a-zoom .rk-item { animation-name: ltZoom; }
+.rk-a-flip .rk-item { animation-name: ltFlip; }
+.rk-a-drop .rk-item { animation-name: ltDrop; }
+.rk-a-glitch .rk-item { animation-name: ltGlitch; animation-timing-function: steps(2); }
+.rk-a-fade .rk-item { animation-name: ltFade; }
+.rk.rk-out { animation: ltOut .45s ease forwards; }

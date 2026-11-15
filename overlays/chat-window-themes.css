@@ -1,0 +1,352 @@
+/* ============================================================
+   أشكال الرسائل لكل ثيم (LiveDeck Broadcast)
+   - [data-theme] على منطقة الشات (#feed) وعلى مربعات المعاينة
+   - [data-side] يحدد الاتجاه: right = يمين ، left = يسار
+   - كل رسالة فيها --c1 و --c2 (لون دور المستخدم أو نوع الحدث)
+   المعرّفات (neon/glass/cyber/timeline/classic) ثابتة للتوافق مع الإعدادات المحفوظة:
+     neon = لوحة · glass = ثلجي · cyber = شريط بث · timeline = مدمج · classic = كلاسيكي
+   ============================================================ */
+
+/* ---------- الاتجاه ---------- */
+[data-side="right"] { direction: rtl; }
+[data-side="left"]  { direction: ltr; }
+[data-side] { align-items: flex-start; }
+
+/* ---------- أساسيات مشتركة ---------- */
+.msg {
+  position: relative;
+  max-width: 100%;
+  animation: msg-in 0.34s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity 0.6s ease;
+}
+.msg.fading { opacity: 0 !important; }
+@keyframes msg-in { from { opacity: 0; transform: translateY(8px); } }
+
+.m-chat .text { unicode-bidi: plaintext; overflow-wrap: anywhere; user-select: text; }
+.name { unicode-bidi: plaintext; }
+.emote { height: 1.5em; vertical-align: middle; margin: 0 0.1em; }
+.only-emotes .emote { height: 3.2em; margin: 0.1em 0.15em; }
+
+.ico { position: relative; display: inline-grid; place-items: center; flex-shrink: 0; }
+.ico svg { width: 0.8em; height: 0.8em; fill: currentColor; }
+.ico .av { display: none; position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+body.show-avatars .m-chat .ico .av { display: block; }
+body.show-avatars .m-chat .ico:has(.av) svg { visibility: hidden; }
+
+.role, .wm { display: none; }
+.ev-img { height: 1.5em; vertical-align: middle; }
+.ev-val { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.m-system { align-self: center; font-size: 0.78em; color: var(--dim); padding: 0.2em 0.8em; opacity: 0.85; }
+
+.mute-btn {
+  display: none; position: absolute; top: 0.2em; inset-inline-end: 0.2em; z-index: 4;
+  background: #f04461; color: #fff; border: 0; border-radius: 6px; font-size: 11px; padding: 2px 8px;
+  font-family: "Tajawal", sans-serif; font-weight: 700;
+}
+.msg:hover > .mute-btn { display: block; }
+
+/* لون نصي مقروء من لون الدور */
+.msg { --ink: color-mix(in srgb, var(--c1) 58%, #fff); }
+
+
+/* ============================================================
+   1) لوحة (neon) — بطاقة داكنة، شريط لوني جانبي، الاسم فوق النص
+   ============================================================ */
+[data-theme="neon"] { font-family: "Tajawal", "Outfit", sans-serif; }
+[data-theme="neon"] > .m-chat {
+  display: flex; flex-direction: column; gap: 0.15em;
+  max-width: 94%; padding: 0.55em 0.95em 0.6em; padding-inline-start: 1.05em;
+  border-radius: 0.7em; background: rgba(16, 17, 22, 0.88); border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0.3em 0.9em rgba(0, 0, 0, 0.25);
+}
+[data-theme="neon"] > .m-chat::before {
+  content: ""; position: absolute; inset-inline-start: 0; top: 0.6em; bottom: 0.6em; width: 0.2em;
+  border-start-end-radius: 0.2em; border-end-end-radius: 0.2em; background: var(--c1);
+}
+[data-theme="neon"] .tag { display: inline-flex; align-items: center; gap: 0.4em; font-weight: 800; font-size: 0.82em; color: var(--ink); }
+[data-theme="neon"] .ico { width: 1.35em; height: 1.35em; border-radius: 0.35em; background: color-mix(in srgb, var(--c1) 22%, transparent); color: var(--ink); }
+[data-theme="neon"] .role { display: inline; font-size: 0.82em; font-weight: 700; color: var(--dim); }
+[data-theme="neon"] .role::before { content: "· "; }
+[data-theme="neon"] .bubble { color: #f1f2f6; font-weight: 500; line-height: 1.5; }
+/* الأحداث */
+[data-theme="neon"] > .m-event {
+  display: inline-flex; align-items: center; gap: 0.55em; max-width: 94%;
+  padding: 0.45em 0.9em 0.45em 0.5em; padding-inline: 0.5em 0.9em;
+  border-radius: 0.7em; background: color-mix(in srgb, var(--c1) 16%, rgba(16, 17, 22, 0.9));
+  border: 1px solid color-mix(in srgb, var(--c1) 35%, transparent);
+  color: #fff; font-weight: 600; font-size: 0.9em;
+}
+[data-theme="neon"] .m-event .ico { width: 1.7em; height: 1.7em; border-radius: 0.45em; background: var(--c1); color: #101114; }
+[data-theme="neon"] .m-event .ico svg { width: 1em; height: 1em; }
+[data-theme="neon"] .ev-name { color: var(--ink); }
+[data-theme="neon"] .ev-val { padding: 0.1em 0.55em; border-radius: 999px; background: rgba(255, 255, 255, 0.1); font-weight: 700; }
+[data-theme="neon"] > .ev-member { opacity: 0.7; font-size: 0.8em; background: rgba(16, 17, 22, 0.75); border-color: rgba(255, 255, 255, 0.06); }
+
+
+/* ============================================================
+   2) ثلجي (glass) — بطاقات فاتحة ونص داكن، يقرأ فوق أي خلفية
+   ============================================================ */
+[data-theme="glass"] { font-family: "Tajawal", "Outfit", sans-serif; }
+[data-theme="glass"] > .m-chat {
+  display: flex; flex-direction: column; gap: 0.1em;
+  max-width: 94%; padding: 0.5em 0.95em 0.55em;
+  border-radius: 0.8em; background: rgba(247, 248, 251, 0.95);
+  box-shadow: 0 0.35em 1em rgba(0, 0, 0, 0.22);
+  color: #14161c;
+}
+[data-theme="glass"] .tag { display: inline-flex; align-items: center; gap: 0.4em; font-weight: 800; font-size: 0.82em; color: color-mix(in srgb, var(--c1) 75%, #000); }
+[data-theme="glass"] .ico { width: 1.35em; height: 1.35em; border-radius: 50%; background: var(--c1); color: #fff; }
+[data-theme="glass"] .role { display: inline; padding: 0.05em 0.5em; border-radius: 999px; background: color-mix(in srgb, var(--c1) 14%, #fff); font-size: 0.8em; font-weight: 700; }
+[data-theme="glass"] .bubble { color: #1b1e26; font-weight: 500; line-height: 1.5; }
+[data-theme="glass"] > .m-event {
+  display: inline-flex; align-items: center; gap: 0.55em; max-width: 94%;
+  padding: 0.4em 0.95em; padding-inline-start: 0.45em;
+  border-radius: 999px; background: rgba(247, 248, 251, 0.95); color: #14161c;
+  box-shadow: 0 0.3em 0.9em rgba(0, 0, 0, 0.2); font-weight: 600; font-size: 0.9em;
+}
+[data-theme="glass"] .m-event .ico { width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--c1); color: #fff; }
+[data-theme="glass"] .m-event .ico svg { width: 0.95em; height: 0.95em; }
+[data-theme="glass"] .ev-name { color: color-mix(in srgb, var(--c1) 70%, #000); }
+[data-theme="glass"] .ev-val { padding: 0.1em 0.55em; border-radius: 999px; background: color-mix(in srgb, var(--c1) 16%, #fff); font-weight: 700; }
+[data-theme="glass"] > .ev-member { opacity: 0.8; font-size: 0.8em; }
+
+
+/* ============================================================
+   3) شريط بث (cyber) — كتلة اسم ملونة متصلة بشريط داكن، زوايا حادة
+   ============================================================ */
+[data-theme="cyber"] { font-family: "Tajawal", "Outfit", sans-serif; }
+[data-theme="cyber"] > .m-chat { display: flex; flex-direction: column; align-items: flex-start; max-width: 96%; margin-top: 0.15em; }
+[data-theme="cyber"] .tag {
+  display: inline-flex; align-items: center; gap: 0.45em;
+  padding: 0.22em 0.75em 0.2em; background: var(--c1); color: #0d0e12;
+  font-weight: 800; font-size: 0.8em;
+}
+[data-theme="cyber"] .tag .name { color: #0d0e12; }
+[data-theme="cyber"] .ico { width: 1.1em; height: 1.1em; color: #0d0e12; }
+[data-theme="cyber"] .ico svg { width: 0.9em; height: 0.9em; }
+body.show-avatars [data-theme="cyber"] .m-chat .ico:has(.av) { width: 1.4em; height: 1.4em; border-radius: 2px; }
+[data-theme="cyber"] .role { display: inline; padding-inline-start: 0.5em; margin-inline-start: 0.1em; border-inline-start: 1px solid rgba(13, 14, 18, 0.35); font-size: 0.85em; font-weight: 700; opacity: 0.8; }
+[data-theme="cyber"] .bubble {
+  padding: 0.45em 0.9em 0.5em; background: rgba(12, 13, 17, 0.92);
+  border-inline-start: 0.2em solid var(--c1);
+  color: #f3f4f8; font-weight: 500; line-height: 1.5;
+}
+[data-theme="cyber"] > .m-event {
+  display: inline-flex; align-items: stretch; gap: 0; max-width: 96%;
+  background: rgba(12, 13, 17, 0.92); color: #fff; font-weight: 600; font-size: 0.88em;
+}
+[data-theme="cyber"] .m-event .ico { width: 2.1em; background: var(--c1); color: #0d0e12; }
+[data-theme="cyber"] .m-event .ico svg { width: 1em; height: 1em; }
+[data-theme="cyber"] .ev-body { padding: 0.45em 0.8em; align-self: center; }
+[data-theme="cyber"] .ev-name { color: var(--ink); }
+[data-theme="cyber"] .ev-img { align-self: center; margin-inline-end: 0.3em; }
+[data-theme="cyber"] .ev-val { align-self: center; margin-inline-end: 0.7em; color: var(--ink); font-weight: 800; }
+[data-theme="cyber"] > .ev-member { opacity: 0.7; font-size: 0.78em; }
+
+
+/* ============================================================
+   4) مدمج (timeline) — سطر واحد لكل رسالة، بدون بطاقات، مناسب للشات السريع
+   ============================================================ */
+[data-theme="timeline"] { font-family: "Tajawal", "Outfit", sans-serif; gap: 0.15em !important; }
+[data-theme="timeline"] > .msg {
+  align-self: stretch; display: block; padding: 0.28em 0.5em; border-radius: 0.4em; line-height: 1.5;
+}
+[data-theme="timeline"] > .msg:hover { background: rgba(255, 255, 255, 0.05); }
+[data-theme="timeline"] .tag { display: inline-flex; align-items: center; gap: 0.35em; margin-inline-end: 0.35em; vertical-align: top; font-weight: 800; color: var(--ink); }
+[data-theme="timeline"] .tag::after { content: ":"; color: var(--dim); font-weight: 600; }
+[data-theme="timeline"] .ico { width: 1.2em; height: 1.2em; border-radius: 0.3em; background: color-mix(in srgb, var(--c1) 22%, transparent); color: var(--ink); margin-top: 0.12em; }
+[data-theme="timeline"] .ico svg { width: 0.75em; height: 0.75em; }
+body.show-avatars [data-theme="timeline"] .m-chat .ico:has(.av) { border-radius: 50%; }
+[data-theme="timeline"] .bubble { display: inline; color: #eef0f5; font-weight: 500; }
+[data-theme="timeline"] > .m-event { display: flex; align-items: center; gap: 0.45em; font-size: 0.92em; color: rgba(255, 255, 255, 0.85); }
+[data-theme="timeline"] .m-event .ico { color: var(--ink); margin: 0; }
+[data-theme="timeline"] .ev-name { color: var(--ink); }
+[data-theme="timeline"] .ev-val { color: var(--ink); font-weight: 700; }
+[data-theme="timeline"] > .ev-gift { background: color-mix(in srgb, var(--c1) 10%, transparent); }
+[data-theme="timeline"] > .ev-member { opacity: 0.6; font-size: 0.82em; }
+
+
+/* ============================================================
+   5) كلاسيكي (classic) — صورة دائرية + اسم + تعليق
+   ============================================================ */
+[data-theme="classic"] { font-family: "Tajawal", "Segoe UI", sans-serif; }
+[data-theme="classic"] > .msg { align-self: stretch; display: flex; align-items: flex-start; gap: 0.55em; padding: 0.35em 0.5em; border-radius: 0.6em; line-height: 1.5; }
+[data-theme="classic"] > .msg:hover { background: rgba(255, 255, 255, 0.05); }
+[data-theme="classic"] > .m-chat { display: block; }
+[data-theme="classic"] .tag { display: inline-flex; align-items: center; gap: 0.45em; margin-inline-end: 0.4em; vertical-align: top; }
+[data-theme="classic"] .ico { width: 1.7em; height: 1.7em; border-radius: 50%; background: #23252d; color: var(--ink); }
+[data-theme="classic"] .m-chat .ico .av { display: block; }
+[data-theme="classic"] .m-chat .ico:has(.av) svg { visibility: hidden; }
+[data-theme="classic"] .name { font-weight: 800; color: #3ddc97; }
+[data-theme="classic"] .bubble { display: inline; color: #e9edf3; }
+[data-theme="classic"] > .m-event { align-items: center; font-size: 0.95em; }
+[data-theme="classic"] > .ev-gift { background: rgba(255, 181, 71, 0.1); }
+[data-theme="classic"] .m-event .ico { background: transparent; color: var(--c1); width: 1.7em; }
+[data-theme="classic"] .ev-name { color: #3ddc97; margin-inline-end: 0.3em; }
+[data-theme="classic"] .ev-gift .ev-text, [data-theme="classic"] .ev-gift .ev-val { color: #ffc56b; }
+[data-theme="classic"] .ev-follow .ev-text { color: #ff8fb1; }
+[data-theme="classic"] .ev-share .ev-text { color: #7cc0ff; }
+[data-theme="classic"] > .ev-member { opacity: 0.6; font-size: 0.85em; }
+
+
+/* ---------- خلفيات مربعات المعاينة في الإعدادات (صورة بث تقريبية) ---------- */
+.preview { background: linear-gradient(135deg, #3d5a6c 0%, #6f5a40 45%, #2b3b2f 75%, #1a2230 100%); }
+.preview[data-theme="glass"] { background: linear-gradient(135deg, #1f2a38, #3a2d40 60%, #18202a); }
+
+
+/* ============================================================
+   الثيمات القديمة بعد تحسينها
+   glow = نيون · pane = زجاجي · tech = سايبر · line = خط زمني
+   ============================================================ */
+
+/* ---------- 6) نيون: اسم ملوّن فوق بطاقة بإطار مضيء خفيف وخط جانبي ---------- */
+[data-theme="glow"] { font-family: "Outfit", "Tajawal", sans-serif; }
+[data-theme="glow"] > .m-chat { display: flex; flex-direction: column; align-items: flex-start; max-width: 94%; margin-top: 0.35em; }
+[data-theme="glow"] .tag {
+  position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 0.45em;
+  margin-inline-start: 1.4em; padding: 0.2em 0.75em; padding-inline-start: 0.25em;
+  border-radius: 0.45em; background: linear-gradient(90deg, var(--c1), var(--c2));
+  color: #0b0e17; font-weight: 700; font-size: 0.84em;
+  box-shadow: 0 0.2em 0.6em rgba(0, 0, 0, 0.3);
+}
+[data-side="right"][data-theme="glow"] .tag { background: linear-gradient(270deg, var(--c1), var(--c2)); }
+[data-theme="glow"] .tag .name { color: #0b0e17; }
+[data-theme="glow"] .ico { width: 1.4em; height: 1.4em; border-radius: 0.32em; background: rgba(0, 0, 0, 0.2); color: #0b0e17; }
+[data-theme="glow"] .bubble {
+  position: relative; margin-top: -0.55em; padding: 0.9em 1.1em 0.6em;
+  border-radius: 0.8em; background: rgba(10, 12, 20, 0.88);
+  border: 1.5px solid color-mix(in srgb, var(--c1) 55%, transparent);
+  box-shadow: 0 0 0.7em color-mix(in srgb, var(--c1) 22%, transparent);
+  color: #eef1f7; line-height: 1.45;
+}
+[data-theme="glow"] .bubble::before {
+  content: ""; position: absolute; inset-inline-start: -1.5px; top: 28%; bottom: 28%; width: 3px;
+  border-start-end-radius: 3px; border-end-end-radius: 3px; background: linear-gradient(var(--c1), var(--c2));
+}
+[data-theme="glow"] > .m-event {
+  align-self: center; display: inline-flex; align-items: center; gap: 0.55em; margin: 0.35em 0;
+  padding: 0.5em 1.15em; border-radius: 999px; border: 1.5px solid color-mix(in srgb, var(--c1) 80%, transparent);
+  background: rgba(10, 12, 20, 0.88); box-shadow: 0 0 0.7em color-mix(in srgb, var(--c1) 30%, transparent);
+  color: #fff; font-weight: 600; font-size: 0.9em;
+}
+[data-theme="glow"] .m-event .ico { background: none; color: var(--c1); }
+[data-theme="glow"] .m-event .ico svg { width: 1.05em; height: 1.05em; }
+[data-theme="glow"] .ev-name { color: var(--ink); }
+[data-theme="glow"] .ev-val { color: var(--c2); font-weight: 700; }
+[data-theme="glow"] > .ev-member { opacity: 0.7; font-size: 0.8em; padding: 0.35em 0.9em; }
+
+/* ---------- 7) زجاجي: بطاقات زجاج فاتحة مع تبويب الاسم ---------- */
+[data-theme="pane"] { font-family: "Outfit", "Tajawal", sans-serif; }
+[data-theme="pane"] > .m-chat { display: flex; flex-direction: column; align-items: flex-start; max-width: 96%; margin-top: 0.3em; }
+[data-theme="pane"] .tag {
+  display: inline-flex; align-items: center; gap: 0.45em; margin-inline-start: 1.4em;
+  padding: 0.26em 0.85em; padding-inline-start: 0.3em; border-radius: 0.55em 0.55em 0 0;
+  background: color-mix(in srgb, var(--c1) 35%, #ffffff); color: #1c1940; font-weight: 700; font-size: 0.86em;
+}
+[data-theme="pane"] .ico { width: 1.4em; height: 1.4em; border-radius: 0.3em; background: rgba(28, 25, 64, 0.14); color: #1c1940; }
+[data-theme="pane"] .bubble {
+  padding: 0.75em 1.1em; border-radius: 0.9em;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.1));
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0.5em 1.2em rgba(12, 6, 70, 0.3);
+  backdrop-filter: blur(10px); color: #fff; font-weight: 500; line-height: 1.45;
+  text-shadow: 0 1px 2px rgba(20, 10, 80, 0.35);
+}
+[data-theme="pane"] > .m-event {
+  align-self: center; display: inline-flex; align-items: center; gap: 0.55em; margin: 0.3em 0;
+  padding: 0.45em 1.1em; border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.1));
+  border: 1.5px solid rgba(255, 255, 255, 0.42); backdrop-filter: blur(10px);
+  color: #fff; font-weight: 600; font-size: 0.9em;
+}
+[data-theme="pane"] .m-event .ico { background: none; color: color-mix(in srgb, var(--c1) 50%, #fff); }
+[data-theme="pane"] .m-event .ico svg { width: 1.05em; height: 1.05em; }
+[data-theme="pane"] .ev-name { color: color-mix(in srgb, var(--c1) 40%, #fff); }
+[data-theme="pane"] .ev-val { padding: 0.1em 0.6em; border-radius: 999px; background: rgba(255, 255, 255, 0.2); font-weight: 700; }
+[data-theme="pane"] > .ev-member { opacity: 0.75; font-size: 0.8em; padding: 0.35em 0.9em; }
+
+/* ---------- 8) سايبر: اسم سماوي بحروف كبيرة، بطاقة بنفسجية بزخارف تقنية ---------- */
+[data-theme="tech"] { font-family: "Chakra Petch", "Tajawal", sans-serif; }
+[data-theme="tech"] > .m-chat { display: flex; flex-direction: column; align-items: flex-start; max-width: 96%; margin-top: 0.45em; padding-inline-start: 0.85em; }
+[data-theme="tech"] > .m-chat::before {
+  content: ""; position: absolute; inset-inline-start: 0; top: 2em; bottom: 0.3em; width: 0.3em;
+  border: 1.5px solid rgba(255, 79, 216, 0.55); border-inline-end: 0;
+}
+[data-theme="tech"] .tag { display: inline-flex; align-items: center; gap: 0.45em; margin-bottom: 0.3em; font-weight: 700; font-size: 0.88em; letter-spacing: 0.06em; text-transform: uppercase; color: #43f0ff; }
+[data-theme="tech"] .tag::before { content: "+"; color: #ff4fd8; font-weight: 700; }
+[data-theme="tech"] .m-chat .ico { display: none; }
+body.show-avatars [data-theme="tech"] .m-chat .ico:has(.av) { display: inline-grid; width: 1.4em; height: 1.4em; border-radius: 0.2em; box-shadow: 0 0 0 1px #43f0ff; }
+[data-theme="tech"] .role { display: inline; color: #ff4fd8; font-size: 0.72em; letter-spacing: 0.04em; }
+[data-theme="tech"] .role::before { content: "["; }
+[data-theme="tech"] .role::after { content: "]"; }
+[data-theme="tech"] .bubble {
+  position: relative; padding: 0.65em 2.2em 0.85em 1.05em; padding-inline: 1.05em 2.2em;
+  background: linear-gradient(90deg, rgba(120, 35, 200, 0.4), rgba(60, 15, 100, 0.28));
+  border: 1.5px solid rgba(184, 77, 255, 0.85); box-shadow: 0 0 0.6em rgba(184, 77, 255, 0.25);
+  color: #fff; font-family: "Outfit", "Tajawal", sans-serif; font-weight: 600; line-height: 1.45;
+}
+[data-theme="tech"] .bubble::before {
+  content: ""; position: absolute; top: -0.42em; inset-inline-end: 0.9em; width: 3em; height: 0.9em;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0.08em, transparent 0.12em); background-size: 0.55em 0.55em;
+}
+[data-theme="tech"] .bubble::after {
+  content: ""; position: absolute; bottom: 0.3em; inset-inline-end: 0.3em; width: 0.65em; height: 0.65em;
+  background: #ff4fd8; clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+[data-side="right"][data-theme="tech"] .bubble::after { clip-path: polygon(0 0, 100% 100%, 0 100%); }
+[data-theme="tech"] > .m-event {
+  display: inline-flex; align-items: center; gap: 0.55em; margin: 0.3em 0; margin-inline-start: 0.85em; padding: 0.5em 1em;
+  border: 1.5px solid #43f0ff; background: linear-gradient(90deg, rgba(67, 240, 255, 0.12), rgba(120, 35, 200, 0.2));
+  color: #fff; font-weight: 600; font-size: 0.88em; text-transform: uppercase;
+  clip-path: polygon(0 0, calc(100% - 0.7em) 0, 100% 0.7em, 100% 100%, 0.7em 100%, 0 calc(100% - 0.7em));
+}
+[data-theme="tech"] .m-event .ico { color: #ff4fd8; }
+[data-theme="tech"] .m-event .ico svg { width: 1.05em; height: 1.05em; }
+[data-theme="tech"] .ev-name { color: #43f0ff; letter-spacing: 0.04em; }
+[data-theme="tech"] .ev-val { color: #ff4fd8; font-weight: 700; }
+[data-theme="tech"] > .ev-member { opacity: 0.7; font-size: 0.78em; }
+
+/* ---------- 9) خط زمني: أيقونة الدور وخط عمودي، الاسم في إطار مشطوف ---------- */
+[data-theme="line"] { font-family: "Outfit", "Tajawal", sans-serif; }
+[data-theme="line"] > .m-chat { display: flex; flex-direction: column; align-items: flex-start; max-width: 96%; margin-top: 0.35em; padding-inline-start: 2.1em; }
+[data-theme="line"] > .m-chat::before {
+  content: ""; position: absolute; inset-inline-start: 0.68em; top: 1.85em; bottom: 0.15em; width: 2px; border-radius: 2px;
+  background: linear-gradient(var(--c1), color-mix(in srgb, var(--c1) 8%, transparent));
+}
+[data-theme="line"] .tag {
+  position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 0.55em;
+  padding: 0.3em 1.05em; padding-inline: 0.85em 1.05em;
+  color: color-mix(in srgb, var(--c1) 30%, #ffffff); font-weight: 700; font-size: 0.9em;
+}
+[data-theme="line"] .tag::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--c1) 65%, transparent);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 0.55em), calc(100% - 0.55em) 100%, 0 100%);
+}
+[data-theme="line"] .tag::after {
+  content: ""; position: absolute; inset: 1.5px; z-index: -1; background: color-mix(in srgb, var(--c1) 14%, rgb(14, 15, 22));
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 0.5em), calc(100% - 0.5em) 100%, 0 100%);
+}
+[data-side="right"][data-theme="line"] .tag::before { clip-path: polygon(0 0, 100% 0, 100% 100%, 0.55em 100%, 0 calc(100% - 0.55em)); }
+[data-side="right"][data-theme="line"] .tag::after { clip-path: polygon(0 0, 100% 0, 100% 100%, 0.5em 100%, 0 calc(100% - 0.5em)); }
+[data-theme="line"] .tag .ico { position: absolute; inset-inline-start: -2.15em; top: 50%; transform: translateY(-50%); width: 1.4em; height: 1.4em; color: var(--c1); }
+[data-theme="line"] .tag .ico svg { width: 1.05em; height: 1.05em; }
+body.show-avatars [data-theme="line"] .m-chat .ico:has(.av) { border-radius: 50%; box-shadow: 0 0 0 1.5px var(--c1); }
+[data-theme="line"] .role { display: inline; padding-inline-start: 0.55em; border-inline-start: 1px solid color-mix(in srgb, var(--c1) 40%, transparent); font-size: 0.68em; letter-spacing: 0.06em; opacity: 0.75; }
+[data-theme="line"] .bubble { padding: 0.42em 0.1em 0.25em; color: #f1f3f8; font-weight: 600; line-height: 1.45; }
+[data-theme="line"] > .m-event {
+  display: inline-flex; align-items: center; gap: 0.55em; margin: 0.3em 0; padding: 0.32em 0.45em; padding-inline-start: 0.4em;
+  border-radius: 999px; border: 1.5px solid color-mix(in srgb, var(--c1) 60%, transparent);
+  background: color-mix(in srgb, var(--c1) 16%, rgba(14, 15, 22, 0.9)); color: #fff; font-weight: 600; font-size: 0.88em;
+}
+[data-theme="line"] .m-event .ico { width: 1.6em; height: 1.6em; border-radius: 50%; border: 1.5px solid var(--c1); color: var(--c1); }
+[data-theme="line"] .ev-body { padding-inline-end: 0.5em; }
+[data-theme="line"] .ev-name { color: color-mix(in srgb, var(--c1) 35%, #ffffff); }
+[data-theme="line"] .ev-text { color: rgba(255, 255, 255, 0.82); font-weight: 500; }
+[data-theme="line"] .ev-val { padding: 0.15em 0.7em; border-radius: 999px; background: color-mix(in srgb, var(--c1) 50%, rgba(0, 0, 0, 0.2)); font-weight: 700; }
+[data-theme="line"] > .ev-member { opacity: 0.7; font-size: 0.8em; }
+body.fully-clear [data-theme="line"] .bubble { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6); }
+
+/* معاينات الثيمات المستعادة */
+.preview[data-theme="pane"] { background: radial-gradient(70% 70% at 100% 0%, #b5734a, transparent 60%), linear-gradient(180deg, #2c2790, #1b1764); }
+.preview[data-theme="tech"] { background: linear-gradient(rgba(209, 77, 255, 0.07) 1px, transparent 1px) 0 0 / 100% 10px, #12081f; }

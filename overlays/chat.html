@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>LiveDeck Chat</title>
+  <link rel="stylesheet" href="ld-broadcast.css" />
+  <style>
+    html, body { height: 100%; overflow: hidden; font-family: var(--font-ar); }
+    .wrap { height: 100%; display: flex; flex-direction: column; }
+    body.window .wrap { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+    .bar { display: none; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); -webkit-app-region: drag; font-size: 13px; font-weight: 700; }
+    body.window .bar { display: flex; }
+    .bar .viewers { margin-inline-start: auto; color: var(--dim); font-weight: 600; font-family: var(--font); }
+    .bar button { -webkit-app-region: no-drag; background: none; border: none; color: var(--dim); cursor: pointer; font-size: 15px; }
+    ul { list-style: none; margin: 0; padding: 10px; flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
+    li {
+      display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px 8px 14px;
+      border-radius: 12px; background: var(--panel); border: 1px solid var(--line);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+      animation: ld-in .35s var(--ease) both;
+      font-size: 16px; line-height: 1.45; word-break: break-word; font-weight: 500;
+    }
+    li > span { min-width: 0; }
+    img.av { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: #23252d; object-fit: cover; margin-top: 1px; }
+    .who { color: color-mix(in srgb, var(--c) 62%, #fff); font-weight: 800; margin-inline-end: 6px; unicode-bidi: plaintext; }
+    .msg { color: var(--text); unicode-bidi: plaintext; }
+    /* الأحداث: خلفية بلون نوع الحدث خفيفة جداً، ونص الحدث بلونه */
+    li.ev { padding-block: 7px; font-size: 15px; background: color-mix(in srgb, var(--k) 12%, var(--panel)); border-color: color-mix(in srgb, var(--k) 28%, transparent); }
+    li.ev .act { color: var(--k); font-weight: 700; }
+    li.gift { --k: #ffb547; }
+    li.social { --k: #3ddc97; }
+    li.join { --k: #8b93a5; opacity: .75; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar"><span>الشات المباشر</span><span class="viewers" id="viewers">0</span><button id="close" title="إغلاق">✕</button></div>
+    <ul id="list"></ul>
+  </div>
+  <script src="overlay.js"></script>
+  <script src="chat.js"></script>
+</body>
+</html>
