@@ -30,6 +30,8 @@ function createApp(pool, env = process.env) {
   const origins = String(env.CORS_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);
   app.use(cors({ origin: (origin, cb) => cb(null, !origin || origins.includes(origin)) }));
 
+  app.get('/', (_req, res) => res.type('html').send('<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>LiveDeck</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0d12;color:#fff;font-family:Tajawal,Segoe UI,sans-serif"><div style="text-align:center"><h1 style="margin:0 0 8px">LiveDeck</h1><p style="opacity:.7;margin:0">خادم LiveDeck يعمل بنجاح</p></div></body></html>'));
+  app.get('/favicon.ico', (_req, res) => res.status(204).end());
   app.get('/health', (_req, res) => res.json({ ok: true }));
   // زر «اشترك الآن» في التطبيق يفتح هذا الرابط؛ يحوّل لصفحة الدفع (Moyasar/Paddle...) عند ضبط PAYMENT_URL
   // ?plan=monthly|quarterly|yearly يُمرَّر لصفحة الدفع كما هو
@@ -40,7 +42,7 @@ function createApp(pool, env = process.env) {
       if (plan) url.searchParams.set('plan', plan);
       return res.redirect(302, url.toString());
     }
-    res.status(503).type('html').send('<!doctype html><meta charset="utf-8"><body dir="rtl" style="font-family:sans-serif;padding:40px">صفحة الاشتراك قيد التجهيز.</body>');
+    res.status(200).type('html').send('<!doctype html><meta charset="utf-8"><body dir="rtl" style="font-family:sans-serif;padding:40px;background:#0b0d12;color:#fff">صفحة الاشتراك قيد التجهيز.</body>');
   });
 
   // حماية من التخمين: 20 محاولة لكل IP كل 15 دقيقة على التسجيل والدخول
