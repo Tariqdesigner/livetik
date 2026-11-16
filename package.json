@@ -7,7 +7,7 @@
   "engines": { "node": ">=18" },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node test/auth.test.js"
+    "test": "node test/auth.test.js && node test/trial7.test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
